@@ -7,9 +7,20 @@ public class Patient {
 
 
     public static void main(String[] args) {
-        Patient p = new Patient();
-        System.out.println(p    );
+        // Patient p = new Patient();
+        // System.out.println(p    );
+        System.out.println(isAdhaar("12311111111a"));
         
+    }
+
+    // constructor
+    Patient(String Adhaar)throws AdhaarException{
+        if(isAdhaar(Adhaar)){
+            this.AdharNum = Adhaar;
+        }
+        else{
+            throw new AdhaarException();
+        }
         
     }
 
@@ -30,15 +41,19 @@ public class Patient {
     void setNumber(String Phonenumber    ){
         this.phoneNum  = Phonenumber;
     }
-    void setAdhaarNum(String Adhaar ){
-        this.AdharNum = Adhaar;
-    }
 
     // Method
     @Override
     public String toString(){
         return "Name: "+this.name+"\nNumber: "+this.phoneNum+"\nAdhaar: "+this.AdharNum;
     }
+    private static boolean isAdhaar(String adhaar){
+        if(adhaar.length() == 12 && adhaar.matches("\\d+")){
+            return true;
+        }
+        return false;
+    }
+    // Phone Number checker..
 
     
     
