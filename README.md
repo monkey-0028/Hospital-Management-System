@@ -1,4 +1,4 @@
-# Hospital-Management-System
+<!-- # Hospital-Management-System
 ## Two Major classes
 1. **Patient** --> It contains Patient information
 2. **Manager** --> It manages all patient including the history, loading patient information, Finding duplicates, etc.
@@ -25,4 +25,5 @@
 * p.getName(); --> return String
 * p.getNumber(); --> return String
 * p.getAdhaarNum(); --> return String
-```
+``` -->
+i will update this later.
