@@ -7,7 +7,7 @@ public class Manager {
         
         return;
     }
-    @SuppressWarnings("finally")
+
     public Patient createPatient(String Adhaar){
         try{
             return new Patient(Adhaar);
@@ -15,9 +15,7 @@ public class Manager {
         catch(Exception e   ){
             System.out.println(e    );
         }
-        finally{
-            return null;
-        }
+        return null;
     }
 
 }
