@@ -4,8 +4,8 @@ public class Patient {
     private String name = "Null";
     private String phoneNum = "Null";
     private String AdharNum = "Null";
-    private int age;
-    private char sex;
+    private int age=-1;
+    private char sex='n';
     // appointment date and time
 
     
