@@ -25,12 +25,7 @@ public class DataBase {
         System.out.println(d.getMessage());
         d.init();
         try{
-            Patient p = new Patient("222312312345");
-            p.setAge(20);
-            p.setName("Satyapraksh");
-            p.setNumber("+917781834675");
-            p.setSex('M');
-            d.addData(p);
+            d.deleteData("age = 12");
         }
         catch(Exception e   ){
             System.out.println(e);
@@ -60,7 +55,7 @@ public class DataBase {
         }
     }
     // simply adds patient data, without checking wether the name or other variables are set or not. this will be managed by Manager.
-    // handle duplicates
+    // handle duplicates --> DONE
     void addData(Patient p){
         String queryAddData = "INSERT INTO patient (aadhaar, name, number, age, sex) VALUES (?,?,?,?,?)";
         try{
@@ -80,6 +75,64 @@ public class DataBase {
                 this.message  = "Duplicate entry";
             }
             System.out.println(e    );
+        }
+    }
+    // where searchINFO = "name = satyaprakash"
+    Patient [] selectData(String searchINFO){
+        String query = "SELECT * FROM patient WHERE "+searchINFO+";";
+        Patient [] resultArray;
+        try{
+            int size = getResultSetSize(searchINFO);
+            resultArray = new Patient[size];
+
+            ResultSet r = this.statement.executeQuery(query);
+            int ptr = 0;
+            while (r.next()) {
+                resultArray[ptr] = new Patient(r.getString("aadhaar"));
+                resultArray[ptr ].setName(r.getString("name"));
+                resultArray[ptr ].setNumber(r.getString("number"));
+                resultArray[ptr ].setAge(r.getInt("age"));
+                resultArray[ptr ].setSex((r.getString("sex")).charAt(0));
+                ptr++;
+            }
+            return resultArray;
+        }
+        catch(Exception e   ){
+            System.out.println(e);
+            return null;
+        }
+        
+    }
+    private int getResultSetSize(String searchINFO    ){
+        String sizeQuery = "SELECT COUNT(*) AS total FROM patient WHERE "+searchINFO+";";
+        try{
+            ResultSet r = this.statement.executeQuery(sizeQuery);
+            int size = 0;
+            while(r.next()){
+                size = r.getInt("total");
+            }
+            return size;
+            
+        }
+        catch(Exception e   ){
+            System.out.println(e);
+            return -1;
+        }
+    }
+
+    void deleteData(Patient p   ){
+        String deleteQuery = "DELETE FROM patient WHERE aadhaar = "+p.getAdhaarNum()+";";
+        try{
+            statement.executeUpdate(deleteQuery);
+        }
+        catch(Exception e   ){
+            System.out.println(e);
+        }
+    }
+    void deleteData(String searchINFO   ){
+        Patient [] resultArray = this.selectData(searchINFO);
+        for(Patient item: resultArray){
+            deleteData(item);
         }
     }
 }
