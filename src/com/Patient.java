@@ -1,4 +1,6 @@
 package src.com;
+import src.com.Exception.*;
+
 
 public class Patient {
     private String name = "Null";
@@ -8,23 +10,13 @@ public class Patient {
     private char sex='n';
     // appointment date and time
 
-    
-
-
-    public static void main(String[] args) {
-        // Patient p = new Patient();
-        // System.out.println(p    );
-        System.out.println(UtilMethod.isAdhaar("12311111111a"));
-        
-    }
-
     // constructor
-    Patient(String Adhaar)throws WrongDataException{
+    Patient(String Adhaar)throws WrongAdhaarException{
         if(UtilMethod.isAdhaar(Adhaar)){
             this.AdharNum = Adhaar;
         }
         else{
-            throw new WrongDataException();
+            throw new WrongAdhaarException();
         }
         
     }
@@ -47,39 +39,39 @@ public class Patient {
     }
 
     // setters
-    void setName(String name    )throws WrongDataException{
+    void setName(String name    )throws WrongNameExcaption{
         if(UtilMethod.isName(name)){
             this.name = name;
         }
         else{
-            throw new WrongDataException();
+            throw new WrongNameExcaption();
         }
     }
 
-    void setNumber(String Phonenumber    ) throws WrongDataException{
+    void setNumber(String Phonenumber    ) throws WrongNumberException{
         if(UtilMethod.isPhoneNumber(Phonenumber)){
             this.phoneNum = Phonenumber;
         }
         else{
-            throw new WrongDataException();
+            throw new WrongNumberException();
         }
     }
 
-    void setSex(char sex    ) throws WrongDataException{
+    void setSex(char sex    ) throws WrongSexException{
         if(UtilMethod.isSex(sex)){
             this.sex  = sex;
         }
         else{
-            throw new WrongDataException();
+            throw new WrongSexException();
         }
     }
 
-    void setAge(int age ) throws WrongDataException{
+    void setAge(int age ) throws WrongAgeException{
         if(UtilMethod.isAge(age)){
             this.age = age;
         }
         else{
-            throw new WrongDataException();
+            throw new WrongAgeException();
         }
     }
 

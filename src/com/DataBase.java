@@ -3,60 +3,46 @@ import java.sql.*;
 
 public class DataBase {
     private Connection con=null;
-    private String message;
+    private String status;
     private Statement statement=null;
     // constructor
     DataBase(String url,String user, String pass    ){
         try{
             this.con = DriverManager.getConnection(url,user,pass);
             this.statement = con.createStatement();
-            this.message = "Success connection"; 
+            this.status = "Ok"; 
         }
         catch(Exception e){
-            this.message = "Failure Connection";
+            this.status = "ERR --> Problem in Connecting to mysql";
             System.out.println(e);
         }
     }
-    public static void main(String[] args) {
-        // String url = "jdbc:mysql://localhost:3306/GoodHospital";
-        // String user = "GoodUser";
-        // String pass = "GoodPass@123";
-        DataBase d = new DataBase("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
-        System.out.println(d.getMessage());
-        d.init();
-        try{
-            d.deleteData("age = 12");
-        }
-        catch(Exception e   ){
-            System.out.println(e);
-        }
-        return;
-     }
-     // methods
-    String getMessage(){
-        return this.message;
+    String getStatus(){
+        return this.status;
     }
-
+    
     //creating required Table and all
-    void init(){
+    boolean init(){
         // create patient table
         String queryPatientTable = "CREATE TABLE patient(aadhaar VARCHAR(12) PRIMARY KEY,name VARCHAR(60) NOT NULL, number VARCHAR(13) NOT NULL,age INT NOT NULL, sex CHAR NOT NULL);";
         try{
             statement.executeUpdate(queryPatientTable);
-            System.out.println("patient table INITIATED!!");
+            return true;
         }
         catch(Exception e   ){
             if(e.toString().contains("already exists")){
-                System.out.println("patient table INITIATED!!");
+                this.status = "Ok";
+                return true;
             }
             else{
-                System.out.println(e    );
+                this.status = "ERR - problem in initizing table";
+                return false;
             }
         }
     }
     // simply adds patient data, without checking wether the name or other variables are set or not. this will be managed by Manager.
     // handle duplicates --> DONE
-    void addData(Patient p){
+    boolean addData(Patient p){
         String queryAddData = "INSERT INTO patient (aadhaar, name, number, age, sex) VALUES (?,?,?,?,?)";
         try{
             PreparedStatement pStatement = con.prepareStatement(queryAddData);
@@ -68,13 +54,14 @@ public class DataBase {
 
             pStatement.executeUpdate();
 
-            System.out.println("yes");
+            this.status = "Ok";
+            return true;
         }
         catch(Exception e   ){
             if(e.toString().contains("Duplicate entry")){
-                this.message  = "Duplicate entry";
+                this.status = "ERR --> Duplicate entry found! ";
             }
-            System.out.println(e    );
+            return false;
         }
     }
     // where searchINFO = "name = satyaprakash"
@@ -83,7 +70,13 @@ public class DataBase {
         Patient [] resultArray;
         try{
             int size = getResultSetSize(searchINFO);
-            resultArray = new Patient[size];
+            if(size != -1){
+                resultArray = new Patient[size];
+            }
+            else{
+                this.status = "ERR --> can't get the size of ResultSet";
+                return null;
+            }
 
             ResultSet r = this.statement.executeQuery(query);
             int ptr = 0;
@@ -95,14 +88,16 @@ public class DataBase {
                 resultArray[ptr ].setSex((r.getString("sex")).charAt(0));
                 ptr++;
             }
+            this.status = "Ok";
             return resultArray;
         }
         catch(Exception e   ){
-            System.out.println(e);
+            this.status = "ERR --> "+e.toString();
             return null;
         }
         
     }
+
     private int getResultSetSize(String searchINFO    ){
         String sizeQuery = "SELECT COUNT(*) AS total FROM patient WHERE "+searchINFO+";";
         try{
@@ -115,7 +110,6 @@ public class DataBase {
             
         }
         catch(Exception e   ){
-            System.out.println(e);
             return -1;
         }
     }
@@ -124,9 +118,10 @@ public class DataBase {
         String deleteQuery = "DELETE FROM patient WHERE aadhaar = "+p.getAdhaarNum()+";";
         try{
             statement.executeUpdate(deleteQuery);
+            this.status = "Ok";
         }
         catch(Exception e   ){
-            System.out.println(e);
+            this.status = "ERR --> Can't Delete Data\n"+e.toString();
         }
     }
     void deleteData(String searchINFO   ){
