@@ -6,7 +6,7 @@ public class DataBase {
     private String status;
     private Statement statement=null;
     // constructor
-    DataBase(String url,String user, String pass    ){
+    public DataBase(String url,String user, String pass    ){
         try{
             this.con = DriverManager.getConnection(url,user,pass);
             this.statement = con.createStatement();
