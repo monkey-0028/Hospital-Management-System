@@ -25,8 +25,33 @@ public class DataBase {
     boolean init(){
         // create patient table
         String queryPatientTable = "CREATE TABLE patient(aadhaar VARCHAR(12) PRIMARY KEY,name VARCHAR(60) NOT NULL, number VARCHAR(13) NOT NULL,age INT NOT NULL, sex CHAR NOT NULL);";
+        String queryAppointmentTable = "CREATE TABLE appointment(aadhaar VARCHAR(12) NOT NULL, dateTime DATETIME NOT NULL);";
         try{
-            statement.executeUpdate(queryPatientTable);
+            try{
+                statement.executeUpdate(queryPatientTable);
+            }
+            catch(Exception e   ){
+                if(e.toString().contains("already exists")){
+                    this.status = "Ok";
+                }
+                else{
+                    this.status = "ERR - Error in initilizing table";
+                    return false;
+                }
+            }
+            try{
+                statement.execute(queryAppointmentTable);
+            }
+            catch(Exception e   ){
+                if(e.toString().contains("already exists")){
+                    this.status = "Ok";
+                
+                }
+                else{
+                    this.status  = "ERR - problem in initizing table";
+                    return false;
+                }
+            }
             return true;
         }
         catch(Exception e   ){
@@ -39,6 +64,7 @@ public class DataBase {
                 return false;
             }
         }
+    
     }
     // simply adds patient data, without checking wether the name or other variables are set or not. this will be managed by Manager.
     // handle duplicates --> DONE
