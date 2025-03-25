@@ -284,8 +284,6 @@ public class Main {
         searchButton.addActionListener(e -> {
             ArrayList<String> patientData = new ArrayList<>();
             StringBuilder errorMessage = new StringBuilder();
-            boolean isValid = true;
-
             String name = textFields[0].getText().trim();
             String age = textFields[1].getText().trim();
             String sex = textFields[2].getText().trim();
