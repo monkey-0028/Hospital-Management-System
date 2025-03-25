@@ -1,7 +1,5 @@
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -267,7 +265,7 @@ public class Main {
                 patientData.add(aadhar);
                 patientData.add(phone);
                 patients.add(patientData);
-                openResultsPage(searchFrame);
+                patientAddPage(searchFrame);
             }
         });
 
@@ -276,6 +274,34 @@ public class Main {
         searchFrame.add(panel);
         searchFrame.setVisible(true);
 
+    }
+
+    private static void patientAddPage(JFrame parentFrame) {
+        JFrame resultsFrame = new JFrame("Patient Results");
+        resultsFrame.setSize(500, 400);
+        resultsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        resultsFrame.setLocationRelativeTo(parentFrame);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JLabel resultLabel = new JLabel("Patient added successfully", JLabel.CENTER);
+        resultLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        panel.add(resultLabel, BorderLayout.CENTER);  
+
+        JButton backButton = new JButton("Back");
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger color
+        backButton.setForeground(Color.WHITE);
+        backButton.setFocusPainted(false);
+        backButton.setBorder(new LineBorder(new Color(200, 40, 60), 2, true));
+        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        panel.add(backButton, BorderLayout.SOUTH);
+
+        backButton.addActionListener(e -> resultsFrame.dispose());
+
+        resultsFrame.add(panel);
+        resultsFrame.setVisible(true);
     }
 
     private static void openResultsPage(JFrame parentFrame) {
@@ -315,8 +341,4 @@ public class Main {
         resultsFrame.add(panel);
         resultsFrame.setVisible(true);
     }
-
-  
-
-
 }
