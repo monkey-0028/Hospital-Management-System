@@ -270,7 +270,7 @@ public class Main {
         gbc.gridy = labels.length;
         panel.add(warningLabel, gbc);
 
-        JButton searchButton = new JButton("Add Patient");
+        JButton searchButton = new JButton("Add Patient"); // search button is the name. waah!!
         gbc.gridy = labels.length + 1;
         panel.add(searchButton, gbc);
 
@@ -291,16 +291,59 @@ public class Main {
             String aadhar = textFields[3].getText().trim();
             String phone = textFields[4].getText().trim();
 
-            if (!name.matches("[a-zA-Z\\s]*"))
-                errorMessage.append("Invalid Name. ");
-            if (!age.matches("\\d+") || Integer.parseInt(age) <= 0 || Integer.parseInt(age) >= 150)
-                errorMessage.append("Invalid Age. ");
-            if (!sex.equalsIgnoreCase("M") && !sex.equalsIgnoreCase("F"))
-                errorMessage.append("Invalid Sex. ");
+            
+            Patient p = null;
             if (!aadhar.matches("\\d{12}"))
                 errorMessage.append("Invalid Aadhar. ");
-            if (!phone.matches("\\+91\\d{10}"))
+            else{
+                p = m.createPatient(aadhar);
+            }
+            //name
+            if (!name.matches("[a-zA-Z\\s]*"))
+                errorMessage.append("Invalid Name. ");
+            else{
+                try{
+                    p.setName(name);
+                }
+                catch(Exception er   ){
+                    System.out.println(er);
+                }
+            }
+            // age
+            if (!age.matches("\\d+") || Integer.parseInt(age) <= 0 || Integer.parseInt(age) >= 150)
+                errorMessage.append("Invalid Age. ");
+            else{
+                try{
+
+                    p.setAge(Integer.parseInt(age));
+                }
+                catch(Exception er  ){
+                    System.out.println(er   );
+                }
+            }
+            //sex
+            if (!sex.equalsIgnoreCase("M") && !sex.equalsIgnoreCase("F"))
+                errorMessage.append("Invalid Sex. ");
+            else{
+                try{
+                    p.setSex(sex.charAt(0));
+                }
+                catch(Exception er   ){
+                    System.out.println(er    );
+                }
+            }
+            // phone
+            if (!phone.matches("\\+91\\d{10}")){
                 errorMessage.append("Invalid Phone Number. ");
+            }
+            else{
+                try{
+                    p.setNumber(phone);
+                }
+                catch(Exception err ){
+                    System.out.println(err  );
+                }
+            }
 
             if (errorMessage.length() > 0) {
                 warningLabel.setText("Error: " + errorMessage.toString());
@@ -314,6 +357,12 @@ public class Main {
                 // patients.add(patientData);
                 openResultsPage(searchFrame);
             }
+            if(m.checkPatientClass(p)){
+                m.addData(p);
+                System.out.println(m.getStatus());
+                System.out.println("added data to the table");
+            }
+            
         });
 
         backButton.addActionListener(e -> searchFrame.dispose());
