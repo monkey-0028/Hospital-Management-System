@@ -39,7 +39,7 @@ public class Patient {
     }
 
     // setters
-    void setName(String name    )throws WrongNameExcaption{
+    public void setName(String name    )throws WrongNameExcaption{
         if(UtilMethod.isName(name)){
             this.name = name;
         }
@@ -48,7 +48,7 @@ public class Patient {
         }
     }
 
-    void setNumber(String Phonenumber    ) throws WrongNumberException{
+    public void setNumber(String Phonenumber    ) throws WrongNumberException{
         if(UtilMethod.isPhoneNumber(Phonenumber)){
             this.phoneNum = Phonenumber;
         }
@@ -57,7 +57,7 @@ public class Patient {
         }
     }
 
-    void setSex(char sex    ) throws WrongSexException{
+    public void setSex(char sex    ) throws WrongSexException{
         if(UtilMethod.isSex(sex)){
             this.sex  = sex;
         }
@@ -66,7 +66,7 @@ public class Patient {
         }
     }
 
-    void setAge(int age ) throws WrongAgeException{
+    public void setAge(int age ) throws WrongAgeException{
         if(UtilMethod.isAge(age)){
             this.age = age;
         }
@@ -78,7 +78,7 @@ public class Patient {
     // Method
     @Override
     public String toString(){
-        return "Name: "+this.name+"\nNumber: "+this.phoneNum+"\nAdhaar: "+this.AdharNum+"\nAge: "+this.age+"\nSex: "+this.sex;
+        return "Name: "+this.name+", Number: "+this.phoneNum+", Adhaar: "+this.AdharNum+", Age: "+this.age+", Sex: "+this.sex;
     }
     
     

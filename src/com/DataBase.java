@@ -17,12 +17,13 @@ public class DataBase {
             System.out.println(e);
         }
     }
-    String getStatus(){
+    // getters
+    public String getStatus(){
         return this.status;
     }
     
     //creating required Table and all
-    boolean init(){
+    public boolean init(){
         // create patient table
         String queryPatientTable = "CREATE TABLE patient(aadhaar VARCHAR(12) PRIMARY KEY,name VARCHAR(60) NOT NULL, number VARCHAR(13) NOT NULL,age INT NOT NULL, sex CHAR NOT NULL);";
         String queryAppointmentTable = "CREATE TABLE appointment(aadhaar VARCHAR(12) NOT NULL, dateTime DATETIME NOT NULL);";
@@ -68,7 +69,7 @@ public class DataBase {
     }
     // simply adds patient data, without checking wether the name or other variables are set or not. this will be managed by Manager.
     // handle duplicates --> DONE
-    boolean addData(Patient p){
+    public boolean addData(Patient p){
         String queryAddData = "INSERT INTO patient (aadhaar, name, number, age, sex) VALUES (?,?,?,?,?)";
         try{
             PreparedStatement pStatement = con.prepareStatement(queryAddData);
@@ -91,7 +92,7 @@ public class DataBase {
         }
     }
     // where searchINFO = "name = satyaprakash"
-    Patient [] selectData(String searchINFO){
+    public Patient [] selectData(String searchINFO){
         String query = "SELECT * FROM patient WHERE "+searchINFO+";";
         Patient [] resultArray;
         try{
@@ -140,7 +141,7 @@ public class DataBase {
         }
     }
 
-    void deleteData(Patient p   ){
+    public void deleteData(Patient p   ){
         String deleteQuery = "DELETE FROM patient WHERE aadhaar = "+p.getAdhaarNum()+";";
         try{
             statement.executeUpdate(deleteQuery);
@@ -150,7 +151,7 @@ public class DataBase {
             this.status = "ERR --> Can't Delete Data\n"+e.toString();
         }
     }
-    void deleteData(String searchINFO   ){
+    public void deleteData(String searchINFO   ){
         Patient [] resultArray = this.selectData(searchINFO);
         for(Patient item: resultArray){
             deleteData(item);

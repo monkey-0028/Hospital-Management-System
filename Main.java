@@ -2,12 +2,23 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
+import src.com.*;
 
 
 public class Main {
-    private static final ArrayList<ArrayList<String>> patients = new ArrayList<>();
+    private static final ArrayList<String> patients = new ArrayList<>();
+    static Manager m = new Manager("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
+    static Patient[] patientResultSet;
+    static String status;
+    static boolean removeButtonFlag = false;
 
     public static void main(String[] args) {
+        // initilize the database
+        // Manager m = new Manager("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
+        m.init();
+        System.out.println(m.getStatus());
+        
+        
         // Create JFrame
         JFrame frame = new JFrame("Welcome");
         frame.setSize(300, 300);
@@ -73,7 +84,7 @@ public class Main {
         // Make frame visible
         frame.setVisible(true);
         searchBtn.addActionListener(e -> openSearchPage(frame));
-        removeBtn.addActionListener(e -> openSearchPage(frame));
+        removeBtn.addActionListener(e -> {removeButtonFlag = true;openSearchPage(frame);});
         checkBtn.addActionListener(e -> openSearchPage(frame));
         addBtn.addActionListener(e -> openAddPage(frame));
     }
@@ -147,22 +158,52 @@ public class Main {
             if (selectedCategory.equals("Name")) {
                 if (!inputValue.matches("[a-zA-Z\\s]+")) {
                     errorMessage.append("Invalid Name. Only letters and spaces are allowed.");
+                    status = "ERR --> Wrong value entered in Name field";
+                }
+                else{
+                    patientResultSet = m.selectData("name = \""+inputValue+"\"");
+                    System.out.println(m.getStatus());
+                    status = "Ok --> patientResutlSet contain item searched by --> name";
                 }
             } else if (selectedCategory.equals("Age")) {
                 if (!inputValue.matches("\\d+") || Integer.parseInt(inputValue) <= 0 || Integer.parseInt(inputValue) >= 150) {
                     errorMessage.append("Invalid Age. Must be a number between 1 and 150.");
+                    status = "ERR --> Wrong value entered in age field";
+                }
+                else{
+                    patientResultSet = m.selectData("age = "+inputValue);
+                    System.out.println(m.getStatus());
+                    status = "Ok --> patientResultSet contain item searched by --> Age";
                 }
             } else if (selectedCategory.equals("Sex")) {
                 if (!inputValue.equalsIgnoreCase("M") && !inputValue.equalsIgnoreCase("F")) {
                     errorMessage.append("Invalid Sex. Enter 'M' or 'F' only.");
+                    status = "ERR --> Wrong value entered in sex field";
+                }
+                else{
+                    patientResultSet = m.selectData("sex = '"+inputValue+"'");
+                    System.out.println(m.getStatus());
+                    status = "Ok --> patientResutlSet contain item searched by sex";
                 }
             } else if (selectedCategory.equals("Aadhar")) {
                 if (!inputValue.matches("\\d{12}")) {
                     errorMessage.append("Invalid Aadhar. Must be a 12-digit number.");
+                    status = "ERR --> Wrong value entered in aadhar field";
+                }
+                else{
+                    patientResultSet = m.selectData("aadhaar = \""+inputValue+"\"");
+                    System.out.println(m.getStatus());
+                    status = "Ok --> patientREsultSet contain item searched by aadhaar";
                 }
             } else if (selectedCategory.equals("Phone Number")) {
                 if (!inputValue.matches("\\+91\\d{10}")) {
                     errorMessage.append("Invalid Phone Number. Must start with +91 and be 10 digits long.");
+                    status = "ERR --> Invalid phone number entered in field";
+                }
+                else{
+                    patientResultSet = m.selectData("number = \""+inputValue+"\"");
+                    System.out.println(m.getStatus());
+                    status = "Ok --> patientResultSet contain item searched by number";
                 }
             }
 
@@ -173,9 +214,14 @@ public class Main {
                 warningLabel.setText(" ");
 
                 // Add new patient record
-                ArrayList<String> patientData = new ArrayList<>();
-                patientData.add(selectedCategory + ": " + inputValue);
-                patients.add(patientData);
+                // ArrayList<String> patientData = new ArrayList<>();
+                // patientData.add(selectedCategory + ": " + inputValue);
+
+                // ArrayList<String> resultFound = new ArrayList<>();
+                for(Patient item : patientResultSet){
+                    patients.add(item.toString()); 
+                }
+                // patients.add(resultFound);
                 openResultsPage(searchFrame);
                 // JOptionPane.showMessageDialog(addPatientFrame, "Patient Data Added Successfully!");
                 // valueField.setText("");
@@ -223,7 +269,7 @@ public class Main {
         gbc.gridy = labels.length;
         panel.add(warningLabel, gbc);
 
-        JButton searchButton = new JButton("Add Patient");
+        JButton searchButton = new JButton("Add Patient"); // search button is the name. waah!!
         gbc.gridy = labels.length + 1;
         panel.add(searchButton, gbc);
 
@@ -236,24 +282,65 @@ public class Main {
         searchButton.addActionListener(e -> {
             ArrayList<String> patientData = new ArrayList<>();
             StringBuilder errorMessage = new StringBuilder();
-            boolean isValid = true;
-
             String name = textFields[0].getText().trim();
             String age = textFields[1].getText().trim();
             String sex = textFields[2].getText().trim();
             String aadhar = textFields[3].getText().trim();
             String phone = textFields[4].getText().trim();
 
-            if (!name.matches("[a-zA-Z\\s]*"))
-                errorMessage.append("Invalid Name. ");
-            if (!age.matches("\\d+") || Integer.parseInt(age) <= 0 || Integer.parseInt(age) >= 150)
-                errorMessage.append("Invalid Age. ");
-            if (!sex.equalsIgnoreCase("M") && !sex.equalsIgnoreCase("F"))
-                errorMessage.append("Invalid Sex. ");
+            
+            Patient p = null;
             if (!aadhar.matches("\\d{12}"))
                 errorMessage.append("Invalid Aadhar. ");
-            if (!phone.matches("\\+91\\d{10}"))
+            else{
+                p = m.createPatient(aadhar);
+            }
+            //name
+            if (!name.matches("[a-zA-Z\\s]*"))
+                errorMessage.append("Invalid Name. ");
+            else{
+                try{
+                    p.setName(name);
+                }
+                catch(Exception er   ){
+                    System.out.println(er);
+                }
+            }
+            // age
+            if (!age.matches("\\d+") || Integer.parseInt(age) <= 0 || Integer.parseInt(age) >= 150)
+                errorMessage.append("Invalid Age. ");
+            else{
+                try{
+
+                    p.setAge(Integer.parseInt(age));
+                }
+                catch(Exception er  ){
+                    System.out.println(er   );
+                }
+            }
+            //sex
+            if (!sex.equalsIgnoreCase("M") && !sex.equalsIgnoreCase("F"))
+                errorMessage.append("Invalid Sex. ");
+            else{
+                try{
+                    p.setSex(sex.charAt(0));
+                }
+                catch(Exception er   ){
+                    System.out.println(er    );
+                }
+            }
+            // phone
+            if (!phone.matches("\\+91\\d{10}")){
                 errorMessage.append("Invalid Phone Number. ");
+            }
+            else{
+                try{
+                    p.setNumber(phone);
+                }
+                catch(Exception err ){
+                    System.out.println(err  );
+                }
+            }
 
             if (errorMessage.length() > 0) {
                 warningLabel.setText("Error: " + errorMessage.toString());
@@ -264,9 +351,15 @@ public class Main {
                 patientData.add(sex);
                 patientData.add(aadhar);
                 patientData.add(phone);
-                patients.add(patientData);
+                patients.addAll(patientData);
                 patientAddPage(searchFrame);
             }
+            if(m.checkPatientClass(p)){
+                m.addData(p);
+                System.out.println(m.getStatus());
+                System.out.println("added data to the table");
+            }
+            
         });
 
         backButton.addActionListener(e -> searchFrame.dispose());
@@ -307,7 +400,7 @@ public class Main {
     private static void openResultsPage(JFrame parentFrame) {
         JFrame resultsFrame = new JFrame("Search Results");
         resultsFrame.setSize(500, 400);
-        resultsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        resultsFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         resultsFrame.setLocationRelativeTo(parentFrame);
 
         JPanel panel = new JPanel();
@@ -320,11 +413,25 @@ public class Main {
         DefaultListModel<String> listModel = new DefaultListModel<>();
         JList<String> list = new JList<>(listModel);
         for (int i = 0; i < patients.size(); i++) {
-            final int index = i;
-            listModel.addElement(String.join(", ", patients.get(i)));
-            list.addListSelectionListener(e -> {
-            });
+            listModel.addElement(patients.get(i));
         }
+        list.addListSelectionListener(e -> {
+            if(!e.getValueIsAdjusting()){
+                int selectedIndex = list.getSelectedIndex(); // selected index here!!!!!
+                if(selectedIndex != -1){
+                    System.out.println(selectedIndex);
+                    if(removeButtonFlag){
+                        // warning box here (are you sure you want to delete patient)
+                        m.deleteData(patientResultSet[selectedIndex]);
+                        System.out.println(m.getStatus());
+                        System.out.println("removed");
+                        // refresh the list...
+                    }
+                }
+            }
+        });
+
+
         panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
         JButton backButton = new JButton("Back");
@@ -336,7 +443,8 @@ public class Main {
         backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         panel.add(backButton, BorderLayout.SOUTH);
 
-        backButton.addActionListener(e -> resultsFrame.dispose());
+        
+        backButton.addActionListener(e -> {patientResultSet = null;patients.clear();;resultsFrame.dispose();}); // back button ISSUE: clear the array.
 
         resultsFrame.add(panel);
         resultsFrame.setVisible(true);
