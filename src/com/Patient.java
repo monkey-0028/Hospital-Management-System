@@ -78,7 +78,7 @@ public class Patient {
     // Method
     @Override
     public String toString(){
-        return "Name: "+this.name+"\nNumber: "+this.phoneNum+"\nAdhaar: "+this.AdharNum+"\nAge: "+this.age+"\nSex: "+this.sex;
+        return "Name: "+this.name+", Number: "+this.phoneNum+", Adhaar: "+this.AdharNum+", Age: "+this.age+", Sex: "+this.sex;
     }
     
     

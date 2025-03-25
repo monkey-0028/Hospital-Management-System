@@ -2,7 +2,7 @@ package src.com;
 
 public class Manager extends DataBase{
     // Constructor
-    Manager(String url,String user, String pass ){
+    public Manager(String url,String user, String pass ){
         super(url, user, pass);
     }
     
@@ -16,7 +16,7 @@ public class Manager extends DataBase{
         }
     }
     
-    boolean checkPatientClass(Patient p ){
+    public boolean checkPatientClass(Patient p ){
         if(p.getName() == "NULL"){
             return false;
         }
