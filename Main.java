@@ -12,6 +12,7 @@ public class Main {
     static Manager m = new Manager("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
     static Patient[] patientResultSet;
     static String status;
+    static boolean removeButtonFlag = false;
 
     public static void main(String[] args) {
         // initilize the database
@@ -85,7 +86,7 @@ public class Main {
         // Make frame visible
         frame.setVisible(true);
         searchBtn.addActionListener(e -> openSearchPage(frame));
-        removeBtn.addActionListener(e -> openSearchPage(frame));
+        removeBtn.addActionListener(e -> {removeButtonFlag = true;openSearchPage(frame);});
         checkBtn.addActionListener(e -> openSearchPage(frame));
         addBtn.addActionListener(e -> openAddPage(frame));
     }
@@ -388,11 +389,25 @@ public class Main {
         DefaultListModel<String> listModel = new DefaultListModel<>();
         JList<String> list = new JList<>(listModel);
         for (int i = 0; i < patients.size(); i++) {
-            // final int index = i;
             listModel.addElement(patients.get(i));
-            list.addListSelectionListener(e -> { System.out.println(e); // new panel will open which will include the info of appointment
-            });
         }
+        list.addListSelectionListener(e -> {
+            if(!e.getValueIsAdjusting()){
+                int selectedIndex = list.getSelectedIndex(); // selected index here!!!!!
+                if(selectedIndex != -1){
+                    System.out.println(selectedIndex);
+                    if(removeButtonFlag){
+                        // warning box here (are you sure you want to delete patient)
+                        m.deleteData(patientResultSet[selectedIndex]);
+                        System.out.println(m.getStatus());
+                        System.out.println("removed");
+                        // refresh the list...
+                    }
+                }
+            }
+        });
+
+
         panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
         JButton backButton = new JButton("Back");
@@ -405,7 +420,7 @@ public class Main {
         panel.add(backButton, BorderLayout.SOUTH);
 
         
-        backButton.addActionListener(e -> {patients.clear();;resultsFrame.dispose();}); // back button ISSUE: clear the array.
+        backButton.addActionListener(e -> {patientResultSet = null;patients.clear();;resultsFrame.dispose();}); // back button ISSUE: clear the array.
 
         resultsFrame.add(panel);
         resultsFrame.setVisible(true);
