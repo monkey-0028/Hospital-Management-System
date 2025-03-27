@@ -206,4 +206,16 @@ public class DataBase {
             return false;
     }
     }
+    public void addAppointment(String aadaar, String date, int slot, String symp    ){
+        String QueryAddAppointment = "INSERT INTO appointment(aadhar, appointment_date,symptoms,slot)";
+        QueryAddAppointment += String.format(" VALUE (\"%s\",\"%s\",\"%s\",\"slot %d\")", aadaar,date,symp,slot);   ;
+        try{
+            this.statement.executeUpdate(QueryAddAppointment);
+            status = "Ok --> appointment added!!";
+        }
+        catch(Exception e   ){
+            System.out.println(e    );
+            status = "ERR --> can't add appointment";
+        }
+    }
 }

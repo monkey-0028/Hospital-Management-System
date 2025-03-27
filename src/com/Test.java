@@ -58,5 +58,6 @@ public class Test {
         }
         System.out.println(aiimsHospital.getStatus());
         System.out.println(aiimsHospital.isFreeSlot(1,"2025-02-02"));
+        // aiimsHospital.addAppointment("32", "sd", 5, "dsaf");
     }
 }
