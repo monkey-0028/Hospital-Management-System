@@ -183,4 +183,27 @@ public class DataBase {
             deleteData(item);
         }
     }
+    public boolean isFreeSlot(int slot, String date){
+        String query = "SELECT COUNT(*) AS tt FROM appointment WHERE slot = \"slot " + slot +"\"";
+        query += " AND appointment_date = \'"+date+"\';";
+        try{
+            ResultSet r = this.statement.executeQuery(query);
+            int size = 0;
+            while(r.next()){
+                size = r.getInt("tt");
+            }
+            if(size <10){
+                return true;
+            }
+            else{
+                return false;
+            }
+            
+        }
+        catch(Exception e   ){
+            status = "ERR --> isFreeSlot error";
+            System.out.println(status);
+            return false;
+    }
+    }
 }

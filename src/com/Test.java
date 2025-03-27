@@ -57,5 +57,6 @@ public class Test {
             System.out.println(item);
         }
         System.out.println(aiimsHospital.getStatus());
+        System.out.println(aiimsHospital.isFreeSlot(1,"2025-02-02"));
     }
 }
