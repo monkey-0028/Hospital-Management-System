@@ -26,7 +26,7 @@ public class DataBase {
     public boolean init(){
         // create patient table
         String queryPatientTable = "CREATE TABLE patient(aadhaar VARCHAR(12) PRIMARY KEY,name VARCHAR(60) NOT NULL, number VARCHAR(13) NOT NULL,age INT NOT NULL, sex CHAR NOT NULL);";
-        String queryAppointmentTable = "CREATE TABLE appointment(aadhaar VARCHAR(12) NOT NULL, appointment_date DATE NOT NULL,symptoms VARCHAR(200),slot ENUM(\"slot 1\",\"slot 2\",\"slot 3\") NOT NULL,ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
+        String queryAppointmentTable = "CREATE TABLE appointment(aadhaar VARCHAR(12) NOT NULL, appointment_date DATE NOT NULL,symptoms VARCHAR(200),slot INT NOT NULL,ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
         try{
             try{
                 statement.executeUpdate(queryPatientTable);
@@ -184,7 +184,7 @@ public class DataBase {
         }
     }
     public boolean isFreeSlot(int slot, String date){
-        String query = "SELECT COUNT(*) AS tt FROM appointment WHERE slot = \"slot " + slot +"\"";
+        String query = "SELECT COUNT(*) AS tt FROM appointment WHERE slot = " + slot +";";
         query += " AND appointment_date = \'"+date+"\';";
         try{
             ResultSet r = this.statement.executeQuery(query);
@@ -206,9 +206,15 @@ public class DataBase {
             return false;
     }
     }
-    public void addAppointment(String aadaar, String date, int slot, String symp    ){
-        String QueryAddAppointment = "INSERT INTO appointment(aadhar, appointment_date,symptoms,slot)";
-        QueryAddAppointment += String.format(" VALUE (\"%s\",\"%s\",\"%s\",\"slot %d\")", aadaar,date,symp,slot);   ;
+    public void addAppointment(Appointment a){
+        // String aadaar, String date, int slot, String symp
+        String aadaar = a.getAaadhar();
+        String date = a.getAppointment_date();
+        int slot = a.getSlot();
+        String symp = a.getSymptoms();
+
+        String QueryAddAppointment = "INSERT INTO appointment(aadhaar, appointment_date,symptoms,slot)";
+        QueryAddAppointment += String.format(" VALUE (\"%s\",\"%s\",\"%s\",%d)", aadaar,date,symp,slot);   ;
         try{
             this.statement.executeUpdate(QueryAddAppointment);
             status = "Ok --> appointment added!!";
@@ -218,4 +224,48 @@ public class DataBase {
             status = "ERR --> can't add appointment";
         }
     }
+    private int ResultSizeOfAppointment(String aadhaar  ){
+        String query = "SELECT COUNT(*) AS total FROM appointment WHERE aadhaar = \""+aadhaar + "\"";
+        int size = -1;
+        try{
+            ResultSet r = this.statement.executeQuery(query);
+            while(r.next()){
+                size = r.getInt("total");
+            }
+            return size;
+        }
+        catch(Exception e   ){
+            System.out.println(e);
+            return size;
+        }
+    }
+    public Appointment [] selectAppointment(String aadhaar){
+        Appointment [] returnVal = new Appointment[ResultSizeOfAppointment(aadhaar)];
+        int i = 0;
+        String query = "SELECT * FROM appointment WHERE aadhaar = \"" + aadhaar+"\";";
+        try{
+            ResultSet r = this.statement.executeQuery(query);
+            while(r.next()){
+                returnVal[i] = new Appointment();
+                returnVal[i].setAadhaar(aadhaar);
+                returnVal[i].setSlot(r.getInt("slot"));
+                returnVal[i].setSymptom(r.getString("symptoms"));
+                returnVal[i].Setappointment_date(r.getDate("appointment_date").toString());
+                i++;
+            }
+            return returnVal;
+
+        }
+        catch (Exception e  ){
+            System.out.println(e    );
+            return null;
+        }
+        
+    }
+    public static void main(String[] args) {
+        DataBase d = new DataBase("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
+    }
 }
+
+    
+

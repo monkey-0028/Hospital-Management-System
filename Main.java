@@ -15,6 +15,7 @@ public class Main {
     static String status;
     static boolean removeButtonFlag = false;
     static boolean searchButtonFlag  = false;
+    static boolean showAppointment = false;
 
     public static void main(String[] args) {
         // initilize the database
@@ -389,9 +390,11 @@ public class Main {
 
         DefaultListModel<String> listModel = new DefaultListModel<>();
         JList<String> list = new JList<>(listModel);
+
         for (int i = 0; i < patients.size(); i++) {
             listModel.addElement(patients.get(i));
         }
+
         list.addListSelectionListener(e -> {
             if(!e.getValueIsAdjusting()){
                 int selectedIndex = list.getSelectedIndex(); // selected index here!!!!!
@@ -437,7 +440,9 @@ public class Main {
         apButton.addActionListener(e -> {
             if(selectedPatient != null){
                 resultsFrame.dispose();
-                // opens the list of appointments
+                showAppointment = true;
+                // store all appointment in patientResultSet.
+                
             }
         });
         resultsFrame.add(panel);
