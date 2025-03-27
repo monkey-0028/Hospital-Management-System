@@ -26,7 +26,7 @@ public class DataBase {
     public boolean init(){
         // create patient table
         String queryPatientTable = "CREATE TABLE patient(aadhaar VARCHAR(12) PRIMARY KEY,name VARCHAR(60) NOT NULL, number VARCHAR(13) NOT NULL,age INT NOT NULL, sex CHAR NOT NULL);";
-        String queryAppointmentTable = "CREATE TABLE appointment(aadhaar VARCHAR(12) NOT NULL, dateTime DATETIME NOT NULL);";
+        String queryAppointmentTable = "CREATE TABLE appointment(aadhaar VARCHAR(12) NOT NULL, appointment_date DATE NOT NULL,symptoms VARCHAR(200),slot ENUM(\"slot 1\",\"slot 2\",\"slot 3\") NOT NULL,ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
         try{
             try{
                 statement.executeUpdate(queryPatientTable);
@@ -50,6 +50,7 @@ public class DataBase {
                 }
                 else{
                     this.status  = "ERR - problem in initizing table";
+                    System.out.println(e);
                     return false;
                 }
             }
@@ -66,6 +67,31 @@ public class DataBase {
             }
         }
     
+    }
+    public boolean forcedInit(){
+        String q1 = "DROP TABLE patient;";
+        String q2 = "DROP TABLE appointment;";
+        try{
+            try{
+                this.statement.executeUpdate(q1);
+            }
+            catch(Exception e   ){
+                status = "ERR -> can't drop patient table(forecedINIT)";
+            }
+            try{
+                this.statement.executeUpdate(q2);
+            }
+            catch(Exception e   ){
+                status = "ERR --> can't drop appointment table (forcedINIT)";
+            }
+            return init();
+            
+        }
+        catch(Exception e   ){
+            System.out.println(e    );
+            return false;
+        }
+
     }
     // simply adds patient data, without checking wether the name or other variables are set or not. this will be managed by Manager.
     // handle duplicates --> DONE

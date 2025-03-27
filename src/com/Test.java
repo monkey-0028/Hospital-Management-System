@@ -4,14 +4,14 @@ public class Test {
     public static void main(String[] args) {
         Manager aiimsHospital = new Manager("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
         System.out.println(aiimsHospital.getStatus());
-        aiimsHospital.init();
+        aiimsHospital.forcedInit();
         System.out.println(aiimsHospital.getStatus());
         Patient p1 = aiimsHospital.createPatient("123123123123");
         if(p1 == null){
             System.out.println("error");
         }
         Patient p2 = aiimsHospital.createPatient("987096456789");
-        Patient p3 = aiimsHospital.createPatient("456123456789")    ;
+        Patient p3 = aiimsHospital.createPatient("456123456789");
         if(p2 == null || p3 == null ){
             System.out.println("erro");
         }
