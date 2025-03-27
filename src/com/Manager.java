@@ -1,5 +1,7 @@
 package src.com;
 
+import com.mysql.cj.util.Util;
+
 public class Manager extends DataBase{
     // Constructor
     public Manager(String url,String user, String pass ){
@@ -17,16 +19,16 @@ public class Manager extends DataBase{
     }
     
     public boolean checkPatientClass(Patient p ){
-        if(p.getName() == "NULL"){
+        if(!UtilMethod.isName(p.getName())){
             return false;
         }
-        if(p.getPhoneNum() == "NULL"){
+        if(!UtilMethod.isPhoneNumber(p.getPhoneNum())){
             return false;
         }
-        if(p.getAge() == -1){
+        if(!UtilMethod.isAge(p.getAge())){
             return false;
         }
-        if(p.getSex() == 'n'){
+        if(!UtilMethod.isSex(p.getSex())){
             return false;
         }
         return true;

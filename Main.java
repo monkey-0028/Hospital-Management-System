@@ -11,8 +11,10 @@ public class Main {
     private static final ArrayList<String> patients = new ArrayList<>();
     static Manager m = new Manager("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
     static Patient[] patientResultSet;
+    static Patient selectedPatient = null;
     static String status;
     static boolean removeButtonFlag = false;
+    static boolean searchButtonFlag  = false;
 
     public static void main(String[] args) {
         // initilize the database
@@ -23,7 +25,7 @@ public class Main {
         
         // Create JFrame
         JFrame frame = new JFrame("Welcome");
-        frame.setSize(300, 300);
+        frame.setSize(600, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel();
@@ -85,7 +87,7 @@ public class Main {
 
         // Make frame visible
         frame.setVisible(true);
-        searchBtn.addActionListener(e -> openSearchPage(frame));
+        searchBtn.addActionListener(e -> {searchButtonFlag = true;openSearchPage(frame);});
         removeBtn.addActionListener(e -> {removeButtonFlag = true;openSearchPage(frame);});
         checkBtn.addActionListener(e -> openSearchPage(frame));
         addBtn.addActionListener(e -> openAddPage(frame));
@@ -225,6 +227,7 @@ public class Main {
                 }
                 // patients.add(resultFound);
                 openResultsPage(searchFrame);
+                searchFrame.dispose();
                 // JOptionPane.showMessageDialog(addPatientFrame, "Patient Data Added Successfully!");
                 // valueField.setText("");
             }
@@ -321,8 +324,8 @@ public class Main {
                 }
             }
             //sex
-            if (!sex.equalsIgnoreCase("M") && !sex.equalsIgnoreCase("F"))
-                errorMessage.append("Invalid Sex. ");
+            if (!sex.equals("M") && !sex.equals("F"))
+                errorMessage.append("Invalid Sex.M or F only. ");
             else{
                 try{
                     p.setSex(sex.charAt(0));
@@ -354,12 +357,12 @@ public class Main {
                 patientData.add(aadhar);
                 patientData.add(phone);
                 // patients.add(patientData);
-                openResultsPage(searchFrame);
-            }
-            if(m.checkPatientClass(p)){
-                m.addData(p);
-                System.out.println(m.getStatus());
-                System.out.println("added data to the table");
+                if(m.checkPatientClass(p)){
+                    System.out.println("not added, in progress, code to write here");  
+                }
+                else{
+                    System.out.println("something went wrong");
+                }
             }
             
         });
@@ -393,19 +396,13 @@ public class Main {
             if(!e.getValueIsAdjusting()){
                 int selectedIndex = list.getSelectedIndex(); // selected index here!!!!!
                 if(selectedIndex != -1){
-                    System.out.println(selectedIndex);
-                    if(removeButtonFlag){
-                        // warning box here (are you sure you want to delete patient)
-                        m.deleteData(patientResultSet[selectedIndex]);
-                        System.out.println(m.getStatus());
-                        System.out.println("removed");
-                        // refresh the list...
-                    }
+                    selectedPatient = patientResultSet[selectedIndex];
+                    System.out.println(selectedPatient);
                 }
             }
         });
 
-
+        
         panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
         JButton backButton = new JButton("Back");
@@ -413,18 +410,41 @@ public class Main {
         backButton.setBackground(new Color(220, 53, 69)); // Bootstrap danger color
         backButton.setForeground(Color.WHITE);
         backButton.setFocusPainted(false);
-        backButton.setBorder(new LineBorder(new Color(200, 40, 60), 2, true));
+        backButton.setBorder(new LineBorder(new Color(200, 53, 69), 2, true));
         backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        panel.add(backButton, BorderLayout.SOUTH);
+       
+
+        JButton apButton = new JButton("check appointments");
+        apButton.setFont(new Font("Arial", Font.BOLD, 14));
+        apButton.setBackground(new Color(36, 160, 237)); // Bootstrap danger color
+        apButton.setForeground(Color.WHITE);
+        apButton.setFocusPainted(false);
+        apButton.setBorder(new LineBorder(new Color(36, 160, 237), 2, true));
+        apButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        JPanel buttonP = new JPanel(new GridLayout(2,1));
+        buttonP.add(backButton);
+
+        if(searchButtonFlag){
+            buttonP.add(apButton);
+        }
+
+        resultsFrame.add(buttonP,BorderLayout.SOUTH);
 
         
-        backButton.addActionListener(e -> {patientResultSet = null;patients.clear();;resultsFrame.dispose();}); // back button ISSUE: clear the array.
-
+        backButton.addActionListener(e -> {searchButtonFlag = false;removeButtonFlag = false;patientResultSet = null;selectedPatient = null;patients.clear();;resultsFrame.dispose();}); // back button ISSUE: clear the array.
+        //apButton listner
+        apButton.addActionListener(e -> {
+            if(selectedPatient != null){
+                resultsFrame.dispose();
+                // opens the list of appointments
+            }
+        });
         resultsFrame.add(panel);
         resultsFrame.setVisible(true);
     }
 
-  
+
 
 
 }

@@ -1,7 +1,6 @@
 package src.com;
-import java.time.LocalDate;
-public class UtilMethod {
 
+public class UtilMethod {
     // checks Adhaar number validity
     public static boolean isAdhaar(String adhaar){
         if(adhaar.length() == 12 && adhaar.matches("\\d+")){
@@ -37,11 +36,6 @@ public class UtilMethod {
         else{
             return false;
         }
-    }
-    public static boolean isDate(int year, int month, int day){ // "yyyy-mm-dd"
-        LocalDate now = LocalDate.now();
-        LocalDate date = LocalDate.of(year,month,day);
-        return date.equals(now) || date.isAfter(now);
     }
     
 }
