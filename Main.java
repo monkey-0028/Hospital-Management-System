@@ -12,10 +12,12 @@ public class Main {
     static Manager m = new Manager("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
     static Patient[] patientResultSet;
     static Patient selectedPatient = null;
+    static Appointment[] appointmentsResultSet;
+    static Appointment selectedAppointment = null;
     static String status;
     static boolean removeButtonFlag = false;
     static boolean searchButtonFlag  = false;
-    static boolean showAppointment = false;
+    static boolean showAppointmentFlag = false;
 
     public static void main(String[] args) {
         // initilize the database
@@ -391,16 +393,29 @@ public class Main {
         DefaultListModel<String> listModel = new DefaultListModel<>();
         JList<String> list = new JList<>(listModel);
 
-        for (int i = 0; i < patients.size(); i++) {
-            listModel.addElement(patients.get(i));
+        if(showAppointmentFlag){
+            for(int i = 0;i<appointmentsResultSet.length ; i++){
+                listModel.addElement(appointmentsResultSet[i].toString());
+            }
+        }
+        else{
+            for (int i = 0; i < patients.size(); i++) {
+                listModel.addElement(patients.get(i));
+            }
         }
 
         list.addListSelectionListener(e -> {
             if(!e.getValueIsAdjusting()){
                 int selectedIndex = list.getSelectedIndex(); // selected index here!!!!!
                 if(selectedIndex != -1){
-                    selectedPatient = patientResultSet[selectedIndex];
-                    System.out.println(selectedPatient);
+                    System.out.println(selectedIndex);
+                    if(showAppointmentFlag){
+                        selectedAppointment = appointmentsResultSet[selectedIndex];
+                    }
+                    else{
+                        selectedPatient = patientResultSet[selectedIndex];
+                        System.out.println(selectedPatient);
+                    }
                 }
             }
         });
@@ -417,13 +432,21 @@ public class Main {
         backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
        
 
-        JButton apButton = new JButton("check appointments");
+        JButton apButton = new JButton("show appointments");
         apButton.setFont(new Font("Arial", Font.BOLD, 14));
         apButton.setBackground(new Color(36, 160, 237)); // Bootstrap danger color
         apButton.setForeground(Color.WHITE);
         apButton.setFocusPainted(false);
         apButton.setBorder(new LineBorder(new Color(36, 160, 237), 2, true));
         apButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JButton detailApButton = new JButton("Expand appointment");
+        detailApButton.setFont(new Font("Arial", Font.BOLD, 14));
+        detailApButton.setBackground(new Color(36, 160, 237)); // Bootstrap danger color
+        detailApButton.setForeground(Color.WHITE);
+        detailApButton.setFocusPainted(false);
+        detailApButton.setBorder(new LineBorder(new Color(36, 160, 237), 2, true));
+        detailApButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         JPanel buttonP = new JPanel(new GridLayout(2,1));
         buttonP.add(backButton);
@@ -431,25 +454,137 @@ public class Main {
         if(searchButtonFlag){
             buttonP.add(apButton);
         }
+        if(showAppointmentFlag){
+            buttonP.add(detailApButton);
+        }
 
         resultsFrame.add(buttonP,BorderLayout.SOUTH);
 
         
-        backButton.addActionListener(e -> {searchButtonFlag = false;removeButtonFlag = false;patientResultSet = null;selectedPatient = null;patients.clear();;resultsFrame.dispose();}); // back button ISSUE: clear the array.
+        backButton.addActionListener(e -> {
+            searchButtonFlag = false;
+            removeButtonFlag = false;
+            showAppointmentFlag = false;
+            patientResultSet = null;
+            appointmentsResultSet = null;
+            selectedPatient = null;
+            selectedAppointment = null;
+            
+
+            patients.clear();
+            resultsFrame.dispose();
+        }); // back button ISSUE: clear the array.
+
         //apButton listner
         apButton.addActionListener(e -> {
             if(selectedPatient != null){
                 resultsFrame.dispose();
-                showAppointment = true;
+                showAppointmentFlag = true;
                 // store all appointment in patientResultSet.
-                
+                appointmentsResultSet = m.selectAppointment(selectedPatient.getAdhaarNum());
+                searchButtonFlag = false;
+                removeButtonFlag = false;
+                patientResultSet = null;
+                // selectedPatient = null;
+                openResultsPage(parentFrame);
+                resultsFrame.dispose();
             }
         });
         resultsFrame.add(panel);
         resultsFrame.setVisible(true);
+
+        // detail button listner
+        detailApButton.addActionListener(e->{
+            if(selectedAppointment != null){
+                openBannerPage(parentFrame,selectedAppointment,selectedPatient);
+            }
+            else{
+                System.out.println("Select somethinng");
+            }
+        });
     }
+    private static void openBannerPage(JFrame parentFrame,Appointment a,Patient p) {
+        JFrame resultsFrame = new JFrame("Banner Page");
+        resultsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        resultsFrame.setSize(600, 400);
+        resultsFrame.setLocationRelativeTo(parentFrame); // Center it
+
+        // String data = "";
+        // data += String.format("Name: %s\nAge: %d\nSex: %c",p.getName(),p.getAge(),p.getSex());
+        // data += String.format("\n\nAdhaar: %s\n\nPhone: %s",p.getAdhaarNum(),p.getPhoneNum());
+
+        // JPanel panel = new JPanel();
+        // panel.add(new JLabel(data));
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        // gbc.gridy = GridBagConstraints.CENTER;
+
+        gbc.insets = new Insets(5, 0, 0, 0);
+
+        // panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Stack labels vertically
 
 
+        JLabel nameLabel = new JLabel(String.format("Name: %s", p.getName()));
+        gbc.gridy = 0;
+        panel.add(nameLabel,gbc);
 
+        JLabel ageLabel = new JLabel("Age: "+p.getAge());
+        gbc.gridy = 1;
+        panel.add(ageLabel,gbc);
 
+        JLabel sexLabel = new JLabel("Sex: "+p.getSex());
+        gbc.gridy = 2;
+        panel.add(sexLabel,gbc);
+
+        gbc.gridy = 3;
+        panel.add(new Label(" "),gbc);
+
+        JLabel aadhaarLabel = new JLabel("Aadhaar: "+p.getAdhaarNum());
+        gbc.gridy = 4;
+        panel.add(aadhaarLabel,gbc);
+        JLabel phoneLabel = new JLabel("Phone: "+p.getPhoneNum());
+        gbc.gridy = 5;
+        panel.add(phoneLabel,gbc);
+
+        gbc.gridy = 6;
+        panel.add(new Label(" "),gbc);
+
+        JLabel apDateLabel = new JLabel("Appointment Date: "+a.getAppointment_date());
+        gbc.gridy = 7;
+        panel.add(apDateLabel,gbc);
+        JLabel slotLabel = new JLabel("Slot: "+a.getSlot());
+        gbc.gridy = 8;
+        panel.add(slotLabel,gbc);
+
+        gbc.gridy = 9;
+        panel.add(new Label(" "),gbc);
+
+        JLabel sympLabel = new JLabel("--Symptoms--");
+        gbc.gridy = 10;
+        panel.add(sympLabel,gbc);
+
+        // symp label
+        JTextArea LastLabel = new JTextArea("| \" "+a.getSymptoms()+" \" ");
+        LastLabel.setLineWrap(true);  // Enable word wrapping
+        LastLabel.setWrapStyleWord(true);
+        LastLabel.setEditable(false); // Make it behave like a label
+        LastLabel.setOpaque(false);   // Make background match JPanel
+        LastLabel.setBorder(null);    // Remove border (optional)
+        LastLabel.setPreferredSize(new Dimension(200, 40)); // Set fixed width and height
+        LastLabel.setCaretPosition(0);
+        LastLabel.setFocusable(false);
+        
+
+        gbc.gridy = 11;
+        panel.add(LastLabel, gbc);
+
+        
+
+        resultsFrame.add(panel);
+        resultsFrame.setVisible(true);
+    }
+    
 }

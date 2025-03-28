@@ -39,6 +39,10 @@ public class Appointment {
         return this.slot;
     }
     // 
+    @Override
+    public String toString(){
+        return String.format("appointment_date: %s, symptoms: %s, slot: %d", this.appointment_date,this.symptoms,this.slot);
+    }
     
 
 }
