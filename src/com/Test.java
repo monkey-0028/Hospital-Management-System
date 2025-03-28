@@ -126,3 +126,5 @@ public class Test {
 
     }
 }
+ 
+// fixed remove button behaviour one commit before.
