@@ -4,7 +4,7 @@ public class Test {
     public static void main(String[] args) {
         Manager aiimsHospital = new Manager("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
         System.out.println(aiimsHospital.getStatus());
-        aiimsHospital.init();
+        aiimsHospital.forcedInit();
         System.out.println(aiimsHospital.getStatus());
         Patient p1 = aiimsHospital.createPatient("123123123123");
         if(p1 == null){
@@ -65,26 +65,60 @@ public class Test {
         Appointment a1 = new Appointment();
         a1.setAadhaar("123123123123");
         a1.setSlot(2);
-        a1.setSymptom("Headache");
-        a1.Setappointment_date("2025-04-02");
+        a1.setSymptom("Bitten by Dogs, need injection");
+        a1.Setappointment_date("2025-05-06");
         aiimsHospital.addAppointment(a1);
         System.out.println(aiimsHospital.getStatus());
 
         Appointment a2 = new Appointment();
         a2.setAadhaar("456123456789");
         a2.setSlot(1);
-        a2.setSymptom("Fever");
-        a2.Setappointment_date("2025-04-03");
+        a2.setSymptom("Fell from stairs, got hit on head");
+        a2.Setappointment_date("2025-07-03");
         aiimsHospital.addAppointment(a2);
         System.out.println(aiimsHospital.getStatus());
 
         Appointment a3 = new Appointment();
         a3.setAadhaar("987096456789");
         a3.setSlot(3);
-        a3.setSymptom("Blood From anus, maybe piles(bawaseer)");
+        a3.setSymptom("loose motion, very patla latrine");
         a3.Setappointment_date("2025-05-03");
         aiimsHospital.addAppointment(a3);
         System.out.println(aiimsHospital.getStatus());
+
+        Appointment a4 = new Appointment();
+        a4.setAadhaar("987096456789");
+        a4.setSlot(3);
+        a4.setSymptom("Blood from anus, maybe piles (Bawaseer)");
+        a4.Setappointment_date("2025-06-01");
+        aiimsHospital.addAppointment(a4);
+        System.out.println(aiimsHospital.getStatus());
+
+        Appointment a5 = new Appointment();
+        a5.setAadhaar("456123456789");
+        a5.setSlot(1);
+        a5.setSymptom("Have high fever from tommorow morning");
+        a5.Setappointment_date("2025-01-01");
+        aiimsHospital.addAppointment(a5);
+        System.out.println(aiimsHospital.getStatus());
+
+        Appointment a6 = new Appointment();
+        a6.setAadhaar("456123456789");
+        a6.setSlot(1);
+        a6.setSymptom("my ankles got hit, severe pain ");
+        a6.Setappointment_date("2025-02-03");
+        aiimsHospital.addAppointment(a6);
+        System.out.println(aiimsHospital.getStatus());
+
+        Appointment a7 = new Appointment();
+        a7.setAadhaar("123123123123");
+        a7.setSlot(2);
+        a7.setSymptom("Head ache, from tommorow.");
+        a7.Setappointment_date("2025-05-06");
+        aiimsHospital.addAppointment(a7);
+        System.out.println(aiimsHospital.getStatus());
+
+        
 
         Appointment [] a = aiimsHospital.selectAppointment("987096456789");
         System.out.println(a.length);
