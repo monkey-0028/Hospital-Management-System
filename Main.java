@@ -236,7 +236,19 @@ public class Main {
             }
         });
         // Back Button Action
-        backButton.addActionListener(e -> searchFrame.dispose());
+        backButton.addActionListener(e -> {
+            searchButtonFlag = false;
+            removeButtonFlag = false;
+            showAppointmentFlag = false;
+            patientResultSet = null;
+            appointmentsResultSet = null;
+            selectedPatient = null;
+            selectedAppointment = null;
+            
+
+            patients.clear();
+            searchFrame.dispose();
+        }); // back button ISSUE: clear the array.
 
         searchFrame.add(panel);
         searchFrame.setVisible(true);
@@ -370,7 +382,19 @@ public class Main {
             
         });
 
-        backButton.addActionListener(e -> searchFrame.dispose());
+        backButton.addActionListener(e -> {
+            searchButtonFlag = false;
+            removeButtonFlag = false;
+            showAppointmentFlag = false;
+            patientResultSet = null;
+            appointmentsResultSet = null;
+            selectedPatient = null;
+            selectedAppointment = null;
+            
+
+            patients.clear();
+            searchFrame.dispose();
+        }); // back button ISSUE: clear the array.
 
         searchFrame.add(panel);
         searchFrame.setVisible(true);
@@ -447,6 +471,14 @@ public class Main {
         detailApButton.setFocusPainted(false);
         detailApButton.setBorder(new LineBorder(new Color(36, 160, 237), 2, true));
         detailApButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JButton removeButtonn = new JButton("Remove selected Item");
+        removeButtonn.setFont(new Font("Arial", Font.BOLD, 14));
+        removeButtonn.setBackground(new Color(170, 40, 55)); // Bootstrap danger color
+        removeButtonn.setForeground(Color.WHITE);
+        removeButtonn.setFocusPainted(false);
+        removeButtonn.setBorder(new LineBorder(new Color(170, 40, 55), 2, true));
+        removeButtonn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         JPanel buttonP = new JPanel(new GridLayout(2,1));
         buttonP.add(backButton);
@@ -456,6 +488,9 @@ public class Main {
         }
         if(showAppointmentFlag){
             buttonP.add(detailApButton);
+        }
+        if(removeButtonFlag){
+            buttonP.add(removeButtonn);
         }
 
         resultsFrame.add(buttonP,BorderLayout.SOUTH);
@@ -501,6 +536,45 @@ public class Main {
             else{
                 System.out.println("Select somethinng");
             }
+        });
+        // remove button listner
+        removeButtonn.addActionListener(e->{
+            if(selectedPatient != null){
+                int choice = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to delete selected item?",
+                    "Warning",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+                );
+                if(choice == JOptionPane.YES_OPTION){
+                    m.deleteData("aadhaar = \""+selectedPatient.getAdhaarNum()+"\"");
+                    Patient [] refreshedArray = new Patient[patientResultSet.length-1];
+                    
+                    int i =0;
+                    for(Patient item : patientResultSet){
+                        if(item != selectedPatient){
+                            refreshedArray[i] = item;
+                            i++;
+                        }
+                    }
+                    patientResultSet = refreshedArray;
+                    
+                    patients.clear();
+
+                    for(Patient item : patientResultSet){
+                        patients.add(item.toString()); 
+                    }
+                    selectedPatient = null;
+                    openResultsPage(parentFrame);
+                    resultsFrame.dispose();
+                    
+                }
+                else{
+                    System.out.println("NO");
+                }
+            }
+
         });
     }
     private static void openBannerPage(JFrame parentFrame,Appointment a,Patient p) {
