@@ -44,9 +44,9 @@ public class Main {
         JButton searchBtn = new JButton("Search Patient");
         JButton addBtn = new JButton("Add Patient");
         JButton removeBtn = new JButton("Remove Patient");
-        JButton checkBtn = new JButton("Check for Appointment");
+        // JButton checkBtn = new JButton("Search Appointment History");
         // Get the largest button size (based on "Check for Appointment")
-        Dimension buttonSize = checkBtn.getPreferredSize();
+        Dimension buttonSize = searchBtn.getPreferredSize();
 
         // Apply the same size constraints to all buttons
         searchBtn.setPreferredSize(buttonSize);
@@ -61,9 +61,9 @@ public class Main {
         removeBtn.setMinimumSize(buttonSize);
         removeBtn.setMaximumSize(buttonSize);
 
-        checkBtn.setPreferredSize(buttonSize);
-        checkBtn.setMinimumSize(buttonSize);
-        checkBtn.setMaximumSize(buttonSize);
+        // checkBtn.setPreferredSize(buttonSize);
+        // checkBtn.setMinimumSize(buttonSize);
+        // checkBtn.setMaximumSize(buttonSize);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
@@ -73,7 +73,7 @@ public class Main {
         searchBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         addBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         removeBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        checkBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // checkBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         buttonPanel.add(searchBtn);
         buttonPanel.add(Box.createVerticalStrut(10)); // Space between buttons
@@ -81,7 +81,7 @@ public class Main {
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(removeBtn);
         buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(checkBtn);
+        // buttonPanel.add(checkBtn);
 
         // Add button panel to main panel
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
@@ -93,7 +93,7 @@ public class Main {
         frame.setVisible(true);
         searchBtn.addActionListener(e -> {searchButtonFlag = true;openSearchPage(frame);});
         removeBtn.addActionListener(e -> {removeButtonFlag = true;openSearchPage(frame);});
-        checkBtn.addActionListener(e -> openSearchPage(frame));
+        // checkBtn.addActionListener(e -> openSearchPage(frame));
         addBtn.addActionListener(e -> openAddPage(frame));
     }
 
