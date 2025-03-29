@@ -18,6 +18,7 @@ public class Main {
     static boolean removeButtonFlag = false;
     static boolean searchButtonFlag  = false;
     static boolean showAppointmentFlag = false;
+    static JTextArea ta = null;
 
     public static void main(String[] args) {
         // initilize the database
@@ -256,7 +257,7 @@ public class Main {
 
     private static void openAddPage(JFrame mainFrame) {
         JFrame searchFrame = new JFrame("Add Patient");
-        searchFrame.setSize(500, 500);
+        searchFrame.setSize(800, 500);
         searchFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         searchFrame.setLocationRelativeTo(mainFrame);
 
@@ -270,9 +271,18 @@ public class Main {
         gbc.insets = new Insets(5, 5, 5, 5);
 
         JLabel[] labels = { new JLabel("Name:"), new JLabel("Age:"), new JLabel("Sex (M/F):"), new JLabel("Aadhar:"),
-                new JLabel("Phone Number:") };
-        JTextField[] textFields = { new JTextField(20), new JTextField(20), new JTextField(20), new JTextField(20),
-                new JTextField(20) };
+                new JLabel("Phone Number:") , new JLabel("Appointment Date: "),new JLabel("Slot(1/2/3)"),new JLabel("Symptoms: ")};
+        JTextField[] textFields = { new JTextField(20), new JTextField(20), new JTextField(20), new JTextField(20), new JTextField(20),
+                new JTextField(20) , new JTextField(20), new JTextField(20)};
+        
+
+
+        JButton slotInfo = new JButton("?");
+        slotInfo.setSize(new Dimension(5,5));
+
+        slotInfo.addActionListener(e ->{
+            JOptionPane.showMessageDialog(panel, "Slot 1 :- 9am - 12pm\nSlot 2 :- 1pm - 5pm\nSlot 3 :- 6pm - 10pm","Slot Info",JOptionPane.WARNING_MESSAGE);;
+        });
 
         for (int i = 0; i < labels.length; i++) {
             gbc.gridx = 0;
@@ -280,8 +290,25 @@ public class Main {
             panel.add(labels[i], gbc);
 
             gbc.gridx = 1;
-            panel.add(textFields[i], gbc);
+            
+            if(i == labels.length-1){
+                
+                ta = new JTextArea("");
+                ta.setPreferredSize(new Dimension(300,50));
+                ta.setLineWrap(true);   
+                ta.setWrapStyleWord(true);
+                panel.add(ta,gbc);
+            }
+            if(textFields[i] != null){
+                panel.add(textFields[i], gbc);
+            }
+            if( i == labels.length -2){
+                gbc.gridx = 2;
+                panel.add(slotInfo,gbc);
+            }
         }
+        
+        
 
         JLabel warningLabel = new JLabel(" ");
         warningLabel.setForeground(Color.RED);
@@ -307,13 +334,21 @@ public class Main {
             String sex = textFields[2].getText().trim();
             String aadhar = textFields[3].getText().trim();
             String phone = textFields[4].getText().trim();
+            String appointment_date = textFields[5].getText().trim();
+            String  slot = textFields[ 6].getText().trim();
+            String symp = ta.getText().trim();
 
+            // System.out.println(appointment_date);
+            // System.out.println(slot);
+            // System.out.println(symp);
             
             Patient p = null;
+            Appointment a =new Appointment();
             if (!aadhar.matches("\\d{12}"))
                 errorMessage.append("Invalid Aadhar. ");
             else{
                 p = m.createPatient(aadhar);
+                a.setAadhaar(aadhar);
             }
             //name
             if (!name.matches("[a-zA-Z\\s]*"))
@@ -361,6 +396,38 @@ public class Main {
                     System.out.println(err  );
                 }
             }
+            // create uitlMethods first
+            // appointment date
+            if (!UtilMethod.isValidDate(appointment_date)){
+                errorMessage.append("Wrong date, check format");
+            }
+            else{
+                a.Setappointment_date(appointment_date);
+            }
+            // symptoms
+            if(symp == null){
+                errorMessage.append("symp is empoty");
+            }
+            else{
+                a.setSymptom(symp);
+            }
+            // slot : check slot is valid or not then check slot is free or not
+            if(!(UtilMethod.isValidSlot(Integer.parseInt(slot)))){
+                errorMessage.append("Wrong slot value");
+                System.out.println(Integer.parseInt(slot));
+            }
+            else{
+                //check if available or not
+                if(UtilMethod.isValidDate(appointment_date)){
+                    if(m.isFreeSlot(Integer.parseInt(slot), appointment_date)){
+                        a.setSlot(Integer.parseInt(slot));
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(panel,"slot "+slot +"is full, try another one","no slot available", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+                
+            }
 
             if (errorMessage.length() > 0) {
                 warningLabel.setText("Error: " + errorMessage.toString());
@@ -372,11 +439,11 @@ public class Main {
                 patientData.add(aadhar);
                 patientData.add(phone);
                 // patients.add(patientData);
-                if(m.checkPatientClass(p)){
-                    System.out.println("not added, in progress, code to write here");  
+                if(m.checkPatientClass(p) && m.checkAppointmentClass(a)){
+                    System.out.println("i will add this");  
                 }
                 else{
-                    System.out.println("something went wrong");
+                    System.out.println("didn't added any data");
                 }
             }
             

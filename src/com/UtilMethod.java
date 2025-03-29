@@ -1,4 +1,7 @@
 package src.com;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class UtilMethod {
     // checks Adhaar number validity
@@ -36,6 +39,35 @@ public class UtilMethod {
         else{
             return false;
         }
+    }
+    public static boolean isValidDate(String dateStr) {
+        try {
+            // Define the date format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            // Parse the input date
+            LocalDate inputDate = LocalDate.parse(dateStr, formatter);
+
+            // Get the current date
+            LocalDate currentDate = LocalDate.now();
+
+            // Return true if inputDate is today or in the future
+            return !inputDate.isBefore(currentDate);
+        } catch (DateTimeParseException e) {
+            return false; // Return false if the date format is incorrect
+        }
+    }
+    public static boolean isValidSlot(int n){
+        if(n == 1 || n == 2 || n==3)  {
+            return true;
+        }
+        return false;
+    }
+
+    // isSlotAvailabe is present in DataBase.java
+    public static void main(String[] args) {
+        System.out.println(isValidDate("2025-05-02"));
+        System.out.println(isValidSlot(2));
     }
     
 }

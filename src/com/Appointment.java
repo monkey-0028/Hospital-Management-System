@@ -2,10 +2,10 @@ package src.com;
 
 
 public class Appointment {
-    private String aadhaar;
-    private String appointment_date;
-    private String symptoms;
-    private int slot;
+    private String aadhaar = null;
+    private String appointment_date = null;
+    private String symptoms = null;
+    private int slot = -1;
 
 
     //setters

@@ -33,5 +33,11 @@ public class Manager extends DataBase{
         }
         return true;
     }
+    public boolean checkAppointmentClass( Appointment a ){
+        if(a.getSlot() != -1 && a.getAaadhar() != null && a.getAppointment_date() != null && a.getSymptoms() != null){
+            return true;
+        }
+        return false;
+    }
 
 }
