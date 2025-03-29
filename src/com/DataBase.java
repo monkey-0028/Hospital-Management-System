@@ -184,8 +184,8 @@ public class DataBase {
         }
     }
     public boolean isFreeSlot(int slot, String date){
-        String query = "SELECT COUNT(*) AS tt FROM appointment WHERE slot = " + slot +";";
-        query += " AND appointment_date = \'"+date+"\';";
+        String query = String.format("SELECT COUNT(*) AS tt FROM appointment WHERE slot = %d AND appointment_date = \"%s\";", slot,date);
+        // query += " AND appointment_date = \"" + date + "\";";
         try{
             ResultSet r = this.statement.executeQuery(query);
             int size = 0;
@@ -193,6 +193,7 @@ public class DataBase {
                 size = r.getInt("tt");
             }
             if(size <10){
+                System.out.println(size);
                 return true;
             }
             else{
@@ -203,6 +204,7 @@ public class DataBase {
         catch(Exception e   ){
             status = "ERR --> isFreeSlot error";
             System.out.println(status);
+            System.out.println(e);
             return false;
     }
     }
@@ -264,6 +266,7 @@ public class DataBase {
     }
     public static void main(String[] args) {
         DataBase d = new DataBase("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
+        d.isFreeSlot(2, "2025-02-02")   ;
     }
 }
 

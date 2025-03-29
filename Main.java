@@ -440,7 +440,12 @@ public class Main {
                 patientData.add(phone);
                 // patients.add(patientData);
                 if(m.checkPatientClass(p) && m.checkAppointmentClass(a)){
-                    System.out.println("i will add this");  
+                    m.addData(p);
+                    m.addAppointment(a);
+                    System.out.println("added data");
+                    status = "Ok --> Data added!!";
+                    JOptionPane.showMessageDialog(panel,"Data added succesfully","Success", JOptionPane.WARNING_MESSAGE);
+                    searchFrame.dispose();
                 }
                 else{
                     System.out.println("didn't added any data");
