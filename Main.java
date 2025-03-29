@@ -118,7 +118,7 @@ public class Main {
         panel.add(searchByLabel, gbc);
 
         // Drop-down menu for search options
-        String[] searchOptions = { "Name", "Age", "Sex", "Aadhar", "Phone Number" };
+        String[] searchOptions = { "All","Name", "Age", "Sex", "Aadhar", "Phone Number"};
         JComboBox<String> searchDropdown = new JComboBox<>(searchOptions);
         gbc.gridx = 1;
         panel.add(searchDropdown, gbc);
@@ -213,6 +213,9 @@ public class Main {
                     System.out.println(m.getStatus());
                     status = "Ok --> patientResultSet contain item searched by number";
                 }
+            } else if(selectedCategory.equals("All")){
+                patientResultSet = m.selectData("all")  ;
+                System.out.println("all data searched");
             }
 
             // Display error or add patient data

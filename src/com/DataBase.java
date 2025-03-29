@@ -119,7 +119,13 @@ public class DataBase {
     }
     // where searchINFO = "name = satyaprakash"
     public Patient [] selectData(String searchINFO){
-        String query = "SELECT * FROM patient WHERE "+searchINFO+";";
+        String query;
+        if(searchINFO == "all"){
+            query = "SELECT * FROM patient;";
+        }
+        else{
+            query = "SELECT * FROM patient WHERE "+searchINFO+";";
+        }
         Patient [] resultArray;
         try{
             int size = getResultSetSize(searchINFO);
@@ -152,13 +158,20 @@ public class DataBase {
     }
 
     private int getResultSetSize(String searchINFO    ){
-        String sizeQuery = "SELECT COUNT(*) AS total FROM patient WHERE "+searchINFO+";";
+        String sizeQuery;
+        if(searchINFO == "all"){
+            sizeQuery = "SELECT COUNT(*) AS total FROM patient;";
+        }
+        else{
+            sizeQuery = "SELECT COUNT(*) AS total FROM patient WHERE "+searchINFO+";";
+        }
         try{
             ResultSet r = this.statement.executeQuery(sizeQuery);
             int size = 0;
             while(r.next()){
                 size = r.getInt("total");
             }
+            // sout(size);
             return size;
             
         }
@@ -267,6 +280,9 @@ public class DataBase {
     public static void main(String[] args) {
         DataBase d = new DataBase("jdbc:mysql://localhost:3306/GoodHospital", "GoodUser", "GoodPass@123");
         d.isFreeSlot(2, "2025-02-02")   ;
+        for(Patient item : d.selectData("all")){
+            System.out.println(item);
+        }
     }
 }
 
