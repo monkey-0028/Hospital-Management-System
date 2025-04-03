@@ -641,6 +641,16 @@ public class Main {
         showProfileBtn.setBorder(new LineBorder(new Color(40, 170, 100), 2, true));
         showProfileBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+        JButton cancelApntBUTTON = new JButton("Cancel Appointment");
+        cancelApntBUTTON.setFont(new Font("Arial", Font.BOLD, 14));
+        cancelApntBUTTON.setBackground(new Color(220, 53, 69)); // Bootstrap danger color
+        cancelApntBUTTON.setForeground(Color.WHITE);
+        cancelApntBUTTON.setFocusPainted(false);
+        cancelApntBUTTON.setBorder(new LineBorder(new Color(200, 53, 69), 2, true));
+        cancelApntBUTTON.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+
+
         
         
         JPanel buttonP = new JPanel(new GridLayout(3,1));
@@ -652,6 +662,7 @@ public class Main {
         }
         if(showAppointmentFlag){
             buttonP.add(detailApButton);
+            buttonP.add(cancelApntBUTTON);
         }
         if(removeButtonFlag){
             buttonP.add(removeButtonn);
@@ -744,6 +755,50 @@ public class Main {
             }
 
         });
+        
+        // remove cancel the appointment
+        cancelApntBUTTON.addActionListener(e -> {
+            if(selectedAppointment != null){
+                int choice = JOptionPane.showConfirmDialog(
+                    null,
+                    "Do you want to delete selected item?",
+                    "Warning",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+                );
+                if(choice == JOptionPane.YES_OPTION){
+                    m.deleteApp(selectedAppointment);
+                    // refresh the appointment list here
+                    // Patient [] refreshedArray = new Patient[patientResultSet.length-1];
+                    Appointment [] refreshedApp = new Appointment[appointmentsResultSet.length - 1];
+                    
+                    int i =0;
+                    for(Appointment item : appointmentsResultSet){
+                        if(item != selectedAppointment){
+                            refreshedApp[i] = item;
+                            i++;
+                        }
+                    }
+                    appointmentsResultSet = refreshedApp;
+                    
+                    // patients.clear();
+
+                    // for(Patient item : patientResultSet){
+                    //     patients.add(item.toString()); 
+                    // }
+                    // selectedPatient = null;
+                    selectedAppointment = null;
+                    openResultsPage(parentFrame);
+                    resultsFrame.dispose();
+                    
+                }
+
+            }
+            else{
+                System.out.println("NO");
+            }
+         });
+
         showProfileBtn.addActionListener(e -> {
             if(selectedPatient == null){
                 JOptionPane.showMessageDialog(panel, "First select something","No Option Selected",JOptionPane.WARNING_MESSAGE);;

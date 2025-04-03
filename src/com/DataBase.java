@@ -192,6 +192,17 @@ public class DataBase {
             this.status = "ERR --> Can't Delete Data\n"+e.toString();
         }
     }
+    public void deleteApp(Appointment a ){
+        String deleteQuery = "DELETE FROM appointment WHERE aadhaar = \"" + a.getAaadhar() + "\" AND appointment_date = \""+a.getAppointment_date()+"\" AND symptoms = \"" + a.getSymptoms()+"\" AND slot = "+a.getSlot()+";";
+        try{
+            statement.executeUpdate(deleteQuery);
+            this.status = "Ok";
+        }
+        catch(Exception ee){
+            System.out.println(ee);
+        }
+
+    }
     public void deleteData(String searchINFO   ){
         Patient [] resultArray = this.selectData(searchINFO);
         for(Patient item: resultArray){
