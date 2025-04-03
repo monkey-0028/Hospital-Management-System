@@ -296,6 +296,13 @@ public class Main {
             JOptionPane.showMessageDialog(panel, "Slot 1 :- 9am - 12pm\nSlot 2 :- 1pm - 5pm\nSlot 3 :- 6pm - 10pm","Slot Info",JOptionPane.WARNING_MESSAGE);;
         });
 
+        JButton dateSyntaxInfo = new JButton("?");
+        dateSyntaxInfo.setSize(new Dimension(5,5));
+
+        dateSyntaxInfo.addActionListener(e->{
+            JOptionPane.showMessageDialog(panel, "Write Date in format: \nYYYY-MM-DD","Date Syntax",JOptionPane.WARNING_MESSAGE);;
+        });
+
         int i = 0;
 
         for (i=0; i < labels.length; i++) {
@@ -319,6 +326,10 @@ public class Main {
             if( i == labels.length -2){
                 gbc.gridx = 2;
                 panel.add(slotInfo,gbc);
+            }
+            if( i == labels.length -3){
+                gbc.gridx = 2;
+                panel.add(dateSyntaxInfo,gbc);
             }
         }
 
