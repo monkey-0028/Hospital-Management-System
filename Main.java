@@ -885,7 +885,10 @@ public class Main {
         // gbc.gridy = 0;
         // panel.add(imagLabel,gbc);
 
-        JLabel imageLabel = new JLabel("< No image Found >");
+        JLabel imageLabel = new JLabel("");
+        ImageIcon noPP = new ImageIcon("./no.png");
+        Image resizedNoPP = noPP.getImage().getScaledInstance(220, 220, Image.SCALE_SMOOTH);
+        noPP = new ImageIcon(resizedNoPP);
 
         if(p.getImage() != null){
             byte [] imageBytes = p.getImage();
@@ -902,13 +905,16 @@ public class Main {
                 imageLabel.setText("");
     
             } catch (Exception e) {
-                imageLabel.setText("< can't load image > ");
+                imageLabel.setIcon(noPP);
                 e.printStackTrace();
                 
             }
 
 
             // imageLabel.setText("Found image");
+        }
+        else{
+            imageLabel.setIcon(noPP);
         }
         
         gbc.gridy = 0;
