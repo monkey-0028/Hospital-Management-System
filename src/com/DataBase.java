@@ -146,6 +146,7 @@ public class DataBase {
                 resultArray[ptr ].setNumber(r.getString("number"));
                 resultArray[ptr ].setAge(r.getInt("age"));
                 resultArray[ptr ].setSex((r.getString("sex")).charAt(0));
+                resultArray[ptr].setImage(r.getBytes("image")); // getting image
                 ptr++;
             }
             this.status = "Ok";

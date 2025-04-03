@@ -8,6 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import src.com.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -631,18 +632,30 @@ public class Main {
         removeButtonn.setFocusPainted(false);
         removeButtonn.setBorder(new LineBorder(new Color(170, 40, 55), 2, true));
         removeButtonn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JButton showProfileBtn = new JButton("Show Profile");
+        showProfileBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        showProfileBtn.setBackground(new Color(40, 170, 100)); // Bootstrap danger color
+        showProfileBtn.setForeground(Color.WHITE);
+        showProfileBtn.setFocusPainted(false);
+        showProfileBtn.setBorder(new LineBorder(new Color(40, 170, 100), 2, true));
+        showProfileBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         
-        JPanel buttonP = new JPanel(new GridLayout(2,1));
+        
+        JPanel buttonP = new JPanel(new GridLayout(3,1));
         buttonP.add(backButton);
 
         if(searchButtonFlag){
             buttonP.add(apButton);
+            buttonP.add(showProfileBtn);
         }
         if(showAppointmentFlag){
             buttonP.add(detailApButton);
         }
         if(removeButtonFlag){
             buttonP.add(removeButtonn);
+            buttonP.add(showProfileBtn);
         }
 
         resultsFrame.add(buttonP,BorderLayout.SOUTH);
@@ -675,6 +688,9 @@ public class Main {
                 // selectedPatient = null;
                 openResultsPage(parentFrame);
                 resultsFrame.dispose();
+            }
+            else{
+                JOptionPane.showMessageDialog(panel, "First select something","No Option Selected",JOptionPane.WARNING_MESSAGE);;
             }
         });
         resultsFrame.add(panel);
@@ -727,6 +743,14 @@ public class Main {
                 }
             }
 
+        });
+        showProfileBtn.addActionListener(e -> {
+            if(selectedPatient == null){
+                JOptionPane.showMessageDialog(panel, "First select something","No Option Selected",JOptionPane.WARNING_MESSAGE);;
+            }
+            else{
+                openProfilePage(parentFrame);
+            }
         });
     }
     private static void openBannerPage(JFrame parentFrame,Appointment a,Patient p) {
@@ -806,6 +830,115 @@ public class Main {
 
         gbc.gridy = 11;
         panel.add(LastLabel, gbc);
+
+        
+
+        resultsFrame.add(panel);
+        resultsFrame.setVisible(true);
+    }
+    private static void openProfilePage(JFrame parentFrame) {
+        JFrame resultsFrame = new JFrame("Profile");
+        resultsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        resultsFrame.setSize(600, 400);
+        resultsFrame.setLocationRelativeTo(parentFrame); // Center it
+        Patient p = selectedPatient;
+
+        // String data = "";
+        // data += String.format("Name: %s\nAge: %d\nSex: %c",p.getName(),p.getAge(),p.getSex());
+        // data += String.format("\n\nAdhaar: %s\n\nPhone: %s",p.getAdhaarNum(),p.getPhoneNum());
+
+        // JPanel panel = new JPanel();
+        // panel.add(new JLabel(data));
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        // gbc.gridy = GridBagConstraints.CENTER;
+
+        gbc.insets = new Insets(5, 0, 0, 0);
+
+        // panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Stack labels vertically`
+        
+        // JLabel imagLabel = null;
+        // if(p.getImage() != null){
+        //     byte [] img = p.getImage();
+        //     ByteArrayInputStream bais = new ByteArrayInputStream(img);
+        //     try{
+        //         BufferedImage OriginalImage = ImageIO.read(bais);
+        //         Image resizedImage = OriginalImage.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+        //         ImageIcon iconImg= new ImageIcon(resizedImage);
+
+        //         imagLabel = new JLabel();
+        //         imageLabel.setIcon(iconImg);
+        //     }
+        //     catch(Exception ee  ){
+        //         imageLabel.setText("Error in loading image");
+        //         System.out.println(ee);
+        //     }
+
+        // }
+        // else{
+        //     imageLabel.setText("No image Found");
+        // }
+
+        // gbc.gridy = 0;
+        // panel.add(imagLabel,gbc);
+
+        JLabel imageLabel = new JLabel("< No image Found >");
+
+        if(p.getImage() != null){
+            byte [] imageBytes = p.getImage();
+            try {
+                ByteArrayInputStream bais = new ByteArrayInputStream(imageBytes);
+                BufferedImage originalImage = ImageIO.read(bais);
+                
+                // Resize image
+                // Image resizedImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                // return new ImageIcon(resizedImage);
+                Image resizedImage = originalImage.getScaledInstance(220, 220, Image.SCALE_SMOOTH);
+                ImageIcon imageIcon = new ImageIcon(resizedImage);
+                imageLabel.setIcon(imageIcon);
+                imageLabel.setText("");
+    
+            } catch (Exception e) {
+                imageLabel.setText("< can't load image > ");
+                e.printStackTrace();
+                
+            }
+
+
+            // imageLabel.setText("Found image");
+        }
+        
+        gbc.gridy = 0;
+        panel.add(imageLabel);
+
+        JLabel nameLabel = new JLabel(String.format("Name: %s", p.getName()));
+        gbc.gridy = 1;
+        panel.add(nameLabel,gbc);
+
+        JLabel ageLabel = new JLabel("Age: "+p.getAge());
+        gbc.gridy = 2;
+        panel.add(ageLabel,gbc);
+
+        JLabel sexLabel = new JLabel("Sex: "+p.getSex());
+        gbc.gridy = 3;
+        panel.add(sexLabel,gbc);
+
+        gbc.gridy = 4;
+        panel.add(new Label(" "),gbc);
+
+        JLabel aadhaarLabel = new JLabel("Aadhaar: "+p.getAdhaarNum());
+        gbc.gridy = 5;
+        panel.add(aadhaarLabel,gbc);
+        JLabel phoneLabel = new JLabel("Phone: "+p.getPhoneNum());
+        gbc.gridy = 6;
+        panel.add(phoneLabel,gbc);
+
+        gbc.gridy = 7;
+        panel.add(new Label(" "),gbc);
+
 
         
 

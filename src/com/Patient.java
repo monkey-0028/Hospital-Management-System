@@ -8,7 +8,7 @@ public class Patient {
     private String AdharNum = "Null";
     private int age=-1;
     private char sex='n';
-    private byte [] image;
+    private byte [] image = null;
     // appointment date and time
 
     // constructor
