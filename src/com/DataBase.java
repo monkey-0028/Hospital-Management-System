@@ -25,7 +25,7 @@ public class DataBase {
     //creating required Table and all
     public boolean init(){
         // create patient table
-        String queryPatientTable = "CREATE TABLE patient(aadhaar VARCHAR(12) PRIMARY KEY,name VARCHAR(60) NOT NULL, number VARCHAR(13) NOT NULL,age INT NOT NULL, sex CHAR NOT NULL);";
+        String queryPatientTable = "CREATE TABLE patient(aadhaar VARCHAR(12) PRIMARY KEY,name VARCHAR(60) NOT NULL, number VARCHAR(13) NOT NULL,age INT NOT NULL, sex CHAR NOT NULL, image LONGBLOB);";
         String queryAppointmentTable = "CREATE TABLE appointment(aadhaar VARCHAR(12) NOT NULL, appointment_date DATE NOT NULL,symptoms VARCHAR(200),slot INT NOT NULL,ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP);";
         try{
             try{
@@ -96,7 +96,7 @@ public class DataBase {
     // simply adds patient data, without checking wether the name or other variables are set or not. this will be managed by Manager.
     // handle duplicates --> DONE
     public boolean addData(Patient p){
-        String queryAddData = "INSERT INTO patient (aadhaar, name, number, age, sex) VALUES (?,?,?,?,?)";
+        String queryAddData = "INSERT INTO patient (aadhaar, name, number, age, sex, image) VALUES (?,?,?,?,?,?)";
         try{
             PreparedStatement pStatement = con.prepareStatement(queryAddData);
             pStatement.setString(1,p.getAdhaarNum());
@@ -104,6 +104,7 @@ public class DataBase {
             pStatement.setString(3, p.getPhoneNum());   
             pStatement.setInt(4, p.getAge());
             pStatement.setString(5, String.valueOf(p.getSex()));
+            pStatement.setBytes(6,p.getImage());
 
             pStatement.executeUpdate();
 

@@ -1,10 +1,16 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.util.ArrayList;
 import src.com.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class Main {
@@ -19,6 +25,9 @@ public class Main {
     static boolean searchButtonFlag  = false;
     static boolean showAppointmentFlag = false;
     static JTextArea ta = null;
+
+    static JLabel imageLabel = new JLabel("NO image selected", JLabel.CENTER);
+    static ImageIcon img_global = null;
 
     public static void main(String[] args) {
         // initilize the database
@@ -287,7 +296,9 @@ public class Main {
             JOptionPane.showMessageDialog(panel, "Slot 1 :- 9am - 12pm\nSlot 2 :- 1pm - 5pm\nSlot 3 :- 6pm - 10pm","Slot Info",JOptionPane.WARNING_MESSAGE);;
         });
 
-        for (int i = 0; i < labels.length; i++) {
+        int i = 0;
+
+        for (i=0; i < labels.length; i++) {
             gbc.gridx = 0;
             gbc.gridy = i;
             panel.add(labels[i], gbc);
@@ -310,6 +321,41 @@ public class Main {
                 panel.add(slotInfo,gbc);
             }
         }
+
+        imageLabel = new JLabel("No Image Selected", SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = i;
+        panel.add(imageLabel, gbc);
+
+        JButton selectImageButton = new JButton("Select Image");
+        //image selector 
+        selectImageButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "jpeg"));
+
+            int result = fileChooser.showOpenDialog(null);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                ImageIcon imageIcon = new ImageIcon(selectedFile.getAbsolutePath());
+                img_global = imageIcon;
+    
+                // Resize Image
+                Image image = imageIcon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(image));
+                imageLabel.setText("");  // Remove text after setting image
+            }
+
+
+
+        });
+        
+        
+        
+        gbc.gridx = 1;
+        gbc.gridy = i;
+        panel.add(selectImageButton, gbc);
+
         
         
 
@@ -386,6 +432,26 @@ public class Main {
                 catch(Exception er   ){
                     System.out.println(er    );
                 }
+            }
+            // image
+            if(img_global != null){
+                byte [] imageIconTOByte;
+                Image img = img_global.getImage();
+                BufferedImage bufferedImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = bufferedImage.createGraphics();
+                g2d.drawImage(img, 0, 0, null);
+                g2d.dispose();
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try{
+                    ImageIO.write(bufferedImage, "png", baos);
+                    imageIconTOByte = baos.toByteArray();
+                    p.setImage(imageIconTOByte);
+                }
+                catch(Exception ee){
+                    System.out.println(ee);
+                }
+
             }
             // phone
             if (!phone.matches("\\+91\\d{10}")){

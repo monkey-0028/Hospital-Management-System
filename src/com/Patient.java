@@ -8,6 +8,7 @@ public class Patient {
     private String AdharNum = "Null";
     private int age=-1;
     private char sex='n';
+    private byte [] image;
     // appointment date and time
 
     // constructor
@@ -36,6 +37,9 @@ public class Patient {
     }
     public char getSex(){
         return this.sex;
+    }
+    public byte [] getImage(){
+        return this.image;
     }
 
     // setters
@@ -73,6 +77,10 @@ public class Patient {
         else{
             throw new WrongAgeException();
         }
+    }
+
+    public void setImage(byte [] i  ){
+        this.image = i;
     }
 
     // Method
