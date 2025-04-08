@@ -839,7 +839,7 @@ public class Main {
     private static void openBannerPage(JFrame parentFrame,Appointment a,Patient p) {
         JFrame resultsFrame = new JFrame("Banner Page");
         resultsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        resultsFrame.setSize(600, 400);
+        resultsFrame.setSize(800, 700);
         resultsFrame.setLocationRelativeTo(parentFrame); // Center it
 
         // String data = "";
@@ -858,48 +858,73 @@ public class Main {
         gbc.insets = new Insets(5, 0, 0, 0);
 
         // panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Stack labels vertically
+        // image
+        JLabel imageLabel;
+        try{
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(p.getImage()));
+            ImageIcon icon = new ImageIcon(image);
+            imageLabel = new JLabel(icon);
+        }
+        catch(Exception e   ){
+            try{
+                BufferedImage imgae = ImageIO.read(new File("./no.png"));
+                Image scaled  = imgae.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
 
+                ImageIcon imgc = new ImageIcon(scaled);
+                imageLabel = new JLabel(imgc);
+            
+            }
+            catch(Exception ee   ){
+                imageLabel = new JLabel("<can't find image>");
+            }
+        }
+
+
+                gbc.gridy = 0;
+        panel.add(imageLabel, gbc);
 
         JLabel nameLabel = new JLabel(String.format("Name: %s", p.getName()));
-        gbc.gridy = 0;
-        panel.add(nameLabel,gbc);
-
-        JLabel ageLabel = new JLabel("Age: "+p.getAge());
         gbc.gridy = 1;
-        panel.add(ageLabel,gbc);
+        panel.add(nameLabel, gbc);
 
-        JLabel sexLabel = new JLabel("Sex: "+p.getSex());
+        JLabel ageLabel = new JLabel("Age: " + p.getAge());
         gbc.gridy = 2;
-        panel.add(sexLabel,gbc);
+        panel.add(ageLabel, gbc);
 
+        JLabel sexLabel = new JLabel("Sex: " + p.getSex());
         gbc.gridy = 3;
-        panel.add(new Label(" "),gbc);
+        panel.add(sexLabel, gbc);
 
-        JLabel aadhaarLabel = new JLabel("Aadhaar: "+p.getAdhaarNum());
         gbc.gridy = 4;
-        panel.add(aadhaarLabel,gbc);
-        JLabel phoneLabel = new JLabel("Phone: "+p.getPhoneNum());
+        panel.add(new Label(" "), gbc);
+
+        JLabel aadhaarLabel = new JLabel("Aadhaar: " + p.getAdhaarNum());
         gbc.gridy = 5;
-        panel.add(phoneLabel,gbc);
+        panel.add(aadhaarLabel, gbc);
 
+        JLabel phoneLabel = new JLabel("Phone: " + p.getPhoneNum());
         gbc.gridy = 6;
-        panel.add(new Label(" "),gbc);
+        panel.add(phoneLabel, gbc);
 
-        JLabel apDateLabel = new JLabel("Appointment Date: "+a.getAppointment_date());
         gbc.gridy = 7;
-        panel.add(apDateLabel,gbc);
-        JLabel slotLabel = new JLabel("Slot: "+a.getSlot());
-        gbc.gridy = 8;
-        panel.add(slotLabel,gbc);
+        panel.add(new Label(" "), gbc);
 
+        JLabel apDateLabel = new JLabel("Appointment Date: " + a.getAppointment_date());
+        gbc.gridy = 8;
+        panel.add(apDateLabel, gbc);
+
+        JLabel slotLabel = new JLabel("Slot: " + a.getSlot());
         gbc.gridy = 9;
-        panel.add(new Label(" "),gbc);
+        panel.add(slotLabel, gbc);
+
+        gbc.gridy = 10;
+        panel.add(new Label(" "), gbc);
 
         JLabel sympLabel = new JLabel("--Symptoms--");
-        gbc.gridy = 10;
-        panel.add(sympLabel,gbc);
+        gbc.gridy = 11;
+        panel.add(sympLabel, gbc);
 
-        // symp label
+                // symp label
         JTextArea LastLabel = new JTextArea("| \" "+a.getSymptoms()+" \" ");
         LastLabel.setLineWrap(true);  // Enable word wrapping
         LastLabel.setWrapStyleWord(true);
