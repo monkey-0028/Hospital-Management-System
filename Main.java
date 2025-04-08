@@ -25,6 +25,7 @@ public class Main {
     static boolean removeButtonFlag = false;
     static boolean searchButtonFlag  = false;
     static boolean showAppointmentFlag = false;
+    static boolean addAppointmentFlag = false;
     static JTextArea ta = null;
 
     static JLabel imageLabel = new JLabel("NO image selected", JLabel.CENTER);
@@ -269,7 +270,13 @@ public class Main {
     }
 
     private static void openAddPage(JFrame mainFrame) {
-        JFrame searchFrame = new JFrame("Add Patient");
+        JFrame searchFrame;
+        if(addAppointmentFlag){
+            searchFrame = new JFrame("Add Appointment");
+        }
+        else{
+            searchFrame = new JFrame("Add Patient");
+        }
         searchFrame.setSize(800, 500);
         searchFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         searchFrame.setLocationRelativeTo(mainFrame);
@@ -282,6 +289,9 @@ public class Main {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5);
+
+        // JLabel[] labels;
+        // JTextField[] textFields;
 
         JLabel[] labels = { new JLabel("Name:"), new JLabel("Age:"), new JLabel("Sex (M/F):"), new JLabel("Aadhar:"),
                 new JLabel("Phone Number:") , new JLabel("Appointment Date: "),new JLabel("Slot(1/2/3)"),new JLabel("Symptoms: ")};
@@ -617,6 +627,14 @@ public class Main {
         apButton.setBorder(new LineBorder(new Color(36, 160, 237), 2, true));
         apButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+        JButton addAppBtn = new JButton("Add appointment");
+        addAppBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        addAppBtn.setBackground(new Color(112,128,144)); // Bootstrap danger color
+        addAppBtn.setForeground(Color.WHITE);
+        addAppBtn.setFocusPainted(false);
+        addAppBtn.setBorder(new LineBorder(new Color(112,128,144), 2, true));
+        addAppBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JButton detailApButton = new JButton("Expand appointment");
         detailApButton.setFont(new Font("Arial", Font.BOLD, 14));
         detailApButton.setBackground(new Color(36, 160, 237)); // Bootstrap danger color
@@ -649,16 +667,26 @@ public class Main {
         cancelApntBUTTON.setBorder(new LineBorder(new Color(200, 53, 69), 2, true));
         cancelApntBUTTON.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+        addAppBtn.addActionListener(e -> {
+            if(selectedPatient != null){
+                addAppointmentFlag = true;
+                // System.out.println("yes");
+                // openAddAppointPage(resultsFrame);
+                openAddAppointmentPage(resultsFrame);
+            }
+        });
+
 
 
         
         
-        JPanel buttonP = new JPanel(new GridLayout(3,1));
+        JPanel buttonP = new JPanel(new GridLayout(4,1));
         buttonP.add(backButton);
 
         if(searchButtonFlag){
             buttonP.add(apButton);
             buttonP.add(showProfileBtn);
+            buttonP.add(addAppBtn);
         }
         if(showAppointmentFlag){
             buttonP.add(detailApButton);
@@ -1005,6 +1033,94 @@ public class Main {
 
         resultsFrame.add(panel);
         resultsFrame.setVisible(true);
+    }
+
+    public static void openAddAppointmentPage(JFrame resultsFrame) {
+        // Create new frame
+        JFrame appointmentFrame = new JFrame("Add Appointment");
+        appointmentFrame.setSize(400, 250);
+        appointmentFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        appointmentFrame.setLocationRelativeTo(resultsFrame); // Center relative to previous frame
+
+        // Create panel and layout
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 2, 10, 10)); // 4 rows: 3 fields + 1 button
+
+        // Labels and fields
+        JLabel slotLabel = new JLabel("Slot:");
+        JTextField slotField = new JTextField();
+
+        JLabel symptomsLabel = new JLabel("Symptoms:");
+        JTextField symptomsField = new JTextField();
+
+        JLabel dateLabel = new JLabel("Date:");
+        JTextField dateField = new JTextField();
+
+        // Submit button
+        JButton submitButton = new JButton("Submit");
+
+        submitButton.addActionListener(e -> {
+            String date = dateField.getText().trim();
+            String symp = symptomsField.getText().trim();
+            String slot = slotField.getText().trim();
+            int check = 0;
+            if(UtilMethod.isValidDate(date) && symp != null && UtilMethod.isValidSlot(Integer.parseInt(slot))){
+                // check for empty slot
+                if(m.isFreeSlot(Integer.parseInt(slot), date)){
+                    // a.setSlot(Integer.parseInt(slot));
+                    // add the appointment here
+                    Appointment a = new Appointment();
+                    a.setAadhaar(selectedPatient.getAdhaarNum());   
+                    a.setSlot(Integer.parseInt(slot));
+                    a.setSymptom(symp);
+                    a.Setappointment_date(date);
+                    m.addAppointment(a);
+                    if(m.getStatus().contains("Ok")){
+                        JOptionPane.showMessageDialog(panel,"Added success!!","success", JOptionPane.WARNING_MESSAGE);
+                        
+                        // searchButtonFlag = false;
+                        // removeButtonFlag = false;
+                        // showAppointmentFlag = false;
+                        // patientResultSet = null;
+                        // appointmentsResultSet = null;
+                        // selectedPatient = null;
+                        // selectedAppointment = null;
+                        // addAppointmentFlag = false;
+
+                        appointmentFrame.dispose();
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(panel,m.getStatus(),"something went wrong", JOptionPane.WARNING_MESSAGE);
+                    }
+
+                }
+                else{
+                    JOptionPane.showMessageDialog(panel,"slot "+slot +"is full, try another one","no slot available", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+            else{
+                JOptionPane.showMessageDialog(panel,"please check the syntax, and try again","wrong details entered", JOptionPane.WARNING_MESSAGE);
+
+            }
+        });
+
+        // Add components to panel
+        panel.add(slotLabel);
+        panel.add(slotField);
+
+        panel.add(symptomsLabel);
+        panel.add(symptomsField);
+
+        panel.add(dateLabel);
+        panel.add(dateField);
+
+        // Empty label to align the button properly
+        panel.add(new JLabel()); 
+        panel.add(submitButton);
+
+        // Add panel to frame
+        appointmentFrame.add(panel);
+        appointmentFrame.setVisible(true);
     }
     
 }
